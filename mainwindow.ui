@@ -6,27 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
-    <height>608</height>
+    <width>1250</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="userButton">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>140</y>
-      <width>114</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>User</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="deleteButton">
     <property name="geometry">
      <rect>
@@ -118,14 +105,20 @@
      <string>name</string>
     </property>
    </widget>
-   <widget class="QGraphicsView" name="graphicsView">
+   <widget class="Lawn" name="graphicsView">
     <property name="geometry">
      <rect>
       <x>150</x>
       <y>100</y>
-      <width>461</width>
-      <height>341</height>
+      <width>1000</width>
+      <height>430</height>
      </rect>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
    </widget>
    <widget class="QLabel" name="sunpointsLabel">
@@ -245,13 +238,28 @@
      <string>P8</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="userBox">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>140</y>
+      <width>111</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>New Item</string>
+     </property>
+    </item>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>651</width>
+     <width>1250</width>
      <height>22</height>
     </rect>
    </property>
@@ -267,6 +275,13 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Lawn</class>
+   <extends>QGraphicsView</extends>
+   <header>lawn.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

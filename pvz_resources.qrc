@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>pvz files/pvz_players.csv</file>
+        <file>gamemanager.cpp</file>
+        <file>gamemanager.h</file>
+        <file>lawn.cpp</file>
+        <file>lawn.h</file>
+        <file>level.cpp</file>
+        <file>level.h</file>
+        <file>main.cpp</file>
+        <file>mainwindow.cpp</file>
+        <file>mainwindow.h</file>
+        <file>plant.cpp</file>
+        <file>plant.h</file>
+        <file>user.cpp</file>
+        <file>user.h</file>
+        <file>zombie.cpp</file>
+        <file>zombie.h</file>
+        <file>pvz files/pvz_levels.csv</file>
+        <file>pvz images/lawn.jpg</file>
+    </qresource>
+</RCC>

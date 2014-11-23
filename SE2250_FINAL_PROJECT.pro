@@ -16,12 +16,21 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     level.cpp \
     gamemanager.cpp \
-    user.cpp
+    user.cpp \
+    lawn.cpp \
+    plant.cpp \
+    zombie.cpp
 
 HEADERS  += mainwindow.h \
     ../user.h \
     level.h \
     gamemanager.h \
-    user.h
+    user.h \
+    lawn.h \
+    plant.h \
+    zombie.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    pvz_resources.qrc
