@@ -23,7 +23,7 @@ class GameManager
 private:
     std::vector<User *> userVector;
     std::vector<Level *> levelVector;
-    std::vector<Plant> plantVector;
+    std::vector<Plant *> plantVector;
 
     int mIndex;
     QFile mFile;
@@ -39,6 +39,7 @@ public:
     void displayImage(QImage * image);
     vector<User *> getUserVector();
     vector<Level *> getLevelVector();
+    vector<Plant *> getPlantVector();
     //void addUser();
     //void delUser();
     //void selUser();

@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     users = gameManager->getUserVector();
     levels = gameManager->getLevelVector();
+    plants = gameManager->getPlantVector();
 
     ui->userComboBox->clear();
     for (int i = 0; i<int(users.size()); i++)
@@ -61,42 +62,50 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_p1Button_clicked()
 {
-
+    currentPlant = plants[0]; // Sets current plant pointer to selected plant in the plants vector
+    std::cout << plants[0]->getName() << " selected\n";
 }
 
 void MainWindow::on_p2Button_clicked()
 {
-
+    currentPlant = plants[1];
+    std::cout << plants[1]->getName() << " selected\n";
 }
 
 void MainWindow::on_p3Button_clicked()
 {
-
+    currentPlant = plants[2];
+    std::cout << plants[2]->getName() << " selected\n";
 }
 
 void MainWindow::on_p4Button_clicked()
 {
-
+    currentPlant = plants[3];
+    std::cout << plants[3]->getName() << " selected\n";
 }
 
 void MainWindow::on_p5Button_clicked()
 {
-
+    currentPlant = plants[4];
+    std::cout << plants[4]->getName() << " selected\n";
 }
 
 void MainWindow::on_p6Button_clicked()
 {
-
+    currentPlant = plants[5];
+    std::cout << plants[5]->getName() << " selected\n";
 }
 
 void MainWindow::on_p7Button_clicked()
 {
-
+    currentPlant = plants[6];
+    std::cout << plants[6]->getName() << " selected\n";
 }
 
 void MainWindow::on_p8Button_clicked()
 {
-
+    currentPlant = plants[7];
+    std::cout << plants[7]->getName() << " selected\n";
 }
 
 

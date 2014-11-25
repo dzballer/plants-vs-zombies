@@ -25,19 +25,31 @@ private:
     QImage * mImage;
 public:
     Plant();
-    int setIndex(int an_index);
-    string setName(string a_name);
-    int setCost(int num_cost);
-    int setLife(int num_life);
-    int setRange(int num_range);
-    int setDamage(int num_damage);
-    double setFireRate(int fire_rate);
-    int setSplash(int num_splash);
-    int setSlow(int num_slow);
-    int setBomb(int num_bomb);
-    double setSeeding(int seeding_time);
-    int setSun(int num_sun);
-    int setNeed(int num_need);
+    void setIndex(int an_index);
+    void setName(string a_name);
+    void setCost(int num_cost);
+    void setLife(int num_life);
+    void setRange(int num_range);
+    void setDamage(int num_damage);
+    void setFireRate(int fire_rate);
+    void setSplash(int num_splash);
+    void setSlow(int num_slow);
+    void setBomb(int num_bomb);
+    void setSeeding(int seeding_time);
+    void setSun(int num_sun);
+    void setNeed(int num_need);
+    string getName();
+    int getCost();
+    int getLife();
+    int getRange();
+    int getDamage();
+    double getFireRate();
+    int getSplash();
+    int getSlow();
+    int getBomb();
+    double getSeeding();
+    int getSun();
+    int getNeed();
 };
 
 #endif // PLANT_H

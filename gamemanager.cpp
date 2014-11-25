@@ -205,21 +205,20 @@ void GameManager::readPlantsFile(QString file_name)
             }
 
             // Creating aPlant and assigning all members from plants data file
-            Plant aPlant;
-            aPlant.setIndex(fileList.at(0).toInt());
-            qDebug() << ""; // If this is not here program crashes
-            aPlant.setName(fileList.at(1).toStdString());
-            aPlant.setCost(fileList.at(2).toInt());
-            aPlant.setLife(fileList.at(3).toInt());
-            aPlant.setRange(fileList.at(4).toInt());
-            aPlant.setDamage(fileList.at(5).toInt());
-            aPlant.setFireRate(fileList.at(6).toDouble());
-            aPlant.setSplash(fileList.at(7).toInt());
-            aPlant.setSlow(fileList.at(8).toInt());
-            aPlant.setBomb(fileList.at(9).toInt());
-            aPlant.setSeeding(fileList.at(10).toInt());
-            aPlant.setSun(fileList.at(11).toInt());
-            aPlant.setNeed(fileList.at(12).toInt());
+            Plant * aPlant = new Plant;
+            aPlant->setIndex(fileList.at(0).toInt());
+            aPlant->setName(fileList.at(1).toStdString());
+            aPlant->setCost(fileList.at(2).toInt());
+            aPlant->setLife(fileList.at(3).toInt());
+            aPlant->setRange(fileList.at(4).toInt());
+            aPlant->setDamage(fileList.at(5).toInt());
+            aPlant->setFireRate(fileList.at(6).toDouble());
+            aPlant->setSplash(fileList.at(7).toInt());
+            aPlant->setSlow(fileList.at(8).toInt());
+            aPlant->setBomb(fileList.at(9).toInt());
+            aPlant->setSeeding(fileList.at(10).toInt());
+            aPlant->setSun(fileList.at(11).toInt());
+            aPlant->setNeed(fileList.at(12).toInt());
             plantVector.push_back(aPlant);
             qDebug() << fileList.at(1) << "'s plant data read and parsed successfully.";
         }
@@ -265,6 +264,11 @@ vector<User *> GameManager::getUserVector()
 vector<Level *> GameManager::getLevelVector()
 {
     return levelVector;
+}
+
+vector<Plant *> GameManager::getPlantVector()
+{
+    return plantVector;
 }
 
 
