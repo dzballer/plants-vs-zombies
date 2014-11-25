@@ -15,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     scene = new QGraphicsScene; // need to delete
 
-
     // loading lawn backgorund
     //ui->graphicsView->setSceneRect(0,0,ui->graphicsView->width(),ui->graphicsView->height());
     scene->setSceneRect(0,0,ui->graphicsView->width()-2,ui->graphicsView->height()-2);;
@@ -31,9 +30,17 @@ MainWindow::MainWindow(QWidget *parent) :
     bottomRight.setX(69); bottomRight.setY(58);
     QRect gridRect(topLeft,bottomRight);
 
+    // buttons disabled before user and level are set
+   // ui->Button->setEnabled(false); // disables the forward and backward buttons because they have no function before file is loaded
+    //ui->backwardButton->setEnabled(false);
 
-    gameManager->readFile(":/pvz files/pvz_players.csv"); // Reading and parsing players file
-    gameManager->readFile(":/pvz files/pvz_levels.csv"); // Reading and parsing levels file
+//gameManager->readPlayersFile(":/pvz files/pvz_players-test-2c1.csv");
+//gameManager->readPlayersFile(":/pvz files/pvz_players-test-2d1.csv");
+//gameManager->readPlayersFile(":/pvz files/pvz_players-test-2e1.csv");
+//gameManager->readPlayersFile(":/pvz files/pvz_players-test-2e2.csv");
+   gameManager->readPlayersFile(":/pvz files/pvz_players.csv"); // Reading and parsing players file
+   gameManager->readLevelsFile(":/pvz files/pvz_levels.csv"); // Reading and parsing levels file
+
 
 }
 
@@ -41,11 +48,6 @@ MainWindow::~MainWindow()
 {
     // save user data
     delete ui;
-}
-
-void MainWindow::on_userButton_clicked()
-{
-
 }
 
 void MainWindow::on_p1Button_clicked()

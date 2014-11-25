@@ -18,6 +18,9 @@ public:
     void setName(string name);
     void setLevel(int level);
     void setTimeStamp(double time_stamp);
+    string getName();
+    int getLevel();
+    double getTimeStamp();
 };
 
 #endif // USER_H

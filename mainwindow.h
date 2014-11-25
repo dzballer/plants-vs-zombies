@@ -24,8 +24,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_userButton_clicked();
-
     void on_p1Button_clicked();
 
     void on_p2Button_clicked();

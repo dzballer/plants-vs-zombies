@@ -26,3 +26,18 @@ void User::setTimeStamp(double time_stamp)
     timestamp = time_stamp;
 }
 
+string User::getName()
+{
+    return name;
+}
+
+int User::getLevel()
+{
+    return level;
+}
+
+double User::getTimeStamp()
+{
+    return timestamp;
+}
+
