@@ -47,6 +47,8 @@ private slots:
 
     void on_deleteButton_clicked();
 
+    void on_newButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     GameManager * gameManager;
@@ -54,6 +56,7 @@ private:
     vector<Level *> levels;
     vector<Plant *> plants;
     Plant * currentPlant;
+    User * currentUser;
     int plantIndex;
 };
 

@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(close()));
     gameManager = new GameManager(); // need to delete
 
+    ui->levelLineEdit->setReadOnly(1);
     //QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("CSV Files (*.csv);;All Files (*.*)"));
     //qDebug() << fileName;
 
@@ -38,15 +39,18 @@ MainWindow::MainWindow(QWidget *parent) :
 //gameManager->readPlayersFile(":/pvz files/pvz_players-test-2d1.csv");
 //gameManager->readPlayersFile(":/pvz files/pvz_players-test-2e1.csv");
 //gameManager->readPlayersFile(":/pvz files/pvz_players-test-2e2.csv");
-   gameManager->readPlayersFile(":/pvz files/pvz_players.csv"); // Reading and parsing players file
-   gameManager->readLevelsFile(":/pvz files/pvz_levels.csv"); // Reading and parsing levels file
-   gameManager->readPlantsFile(":/pvz files/pvz_plants.csv"); // Reading and parsing plants data
+    gameManager->readPlayersFile(":/pvz files/pvz_players.csv"); // Reading and parsing players file
+    gameManager->readLevelsFile(":/pvz files/pvz_levels.csv"); // Reading and parsing levels file
+    gameManager->readPlantsFile(":/pvz files/pvz_plants.csv"); // Reading and parsing plants data
 
     users = gameManager->getUserVector();
     levels = gameManager->getLevelVector();
     plants = gameManager->getPlantVector();
 
     ui->userComboBox->clear();
+    ui->userComboBox->addItem("Users"); // Setting initial ComboBox label to "Users" with an irrelevant index
+    // *** why is it that the initial index is -1 then 0??
+
     for (int i = 0; i<int(users.size()); i++)
     {
         ui->userComboBox->addItem(QString::fromStdString(users[i]->getName()),i);
@@ -111,11 +115,28 @@ void MainWindow::on_p8Button_clicked()
 
 void MainWindow::on_userComboBox_currentIndexChanged(int index)
 {
-    //ui->nameLineEdit->setText(QString::fromStdString(users[index]->getName()));
-    //ui->levelLineEdit->setText(QString::fromStdString(users[index]->getName()));
+    if (index > 0) // For some reason the index is -1 and 0(?) at startup.
+    {
+        ui->nameLineEdit->setText(QString::fromStdString(users[index-1]->getName()));
+        ui->levelLineEdit->setText("Level: " + QString::number(users[index-1]->getLevel()));
+    }
+    qDebug() << index;
 }
 
 void MainWindow::on_deleteButton_clicked()
 {
+    int currentIndex = ui->userComboBox->currentIndex();
+    currentUser = users[currentIndex-1];
+    delete users[currentIndex-1];
+    users.erase(users.begin()+currentIndex-1);
+    ui->userComboBox->removeItem(currentIndex);
+}
 
+void MainWindow::on_newButton_clicked()
+{
+    User * newUser = new User;
+    newUser->setName(ui->nameLineEdit->text().toStdString()); // Setting name of user to the typed name on nameLineEdit
+    users.push_back(newUser);
+
+    ui->userComboBox->addItem(QString::fromStdString(newUser->getName()), int(users.size())); // Adding user to the userComboBox
 }
