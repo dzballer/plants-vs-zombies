@@ -4,67 +4,127 @@ Plant::Plant()
 {
 }
 
-int Plant::setIndex(int an_index)
+void Plant::setIndex(int an_index)
 {
     index = an_index;
 }
 
-string Plant::setName(string a_name)
+void Plant::setName(string a_name)
 {
     name = a_name;
 }
 
-int Plant::setCost(int num_cost)
+void Plant::setCost(int num_cost)
 {
     cost = num_cost;
 }
 
-int Plant::setLife(int num_life)
+void Plant::setLife(int num_life)
 {
     life = num_life;
 }
 
-int Plant::setRange(int num_range)
+void Plant::setRange(int num_range)
 {
     range = num_range;
 }
 
-int Plant::setDamage(int num_damage)
+void Plant::setDamage(int num_damage)
 {
     damage = num_damage;
 }
 
-double Plant::setFireRate(int fire_rate)
+void Plant::setFireRate(int fire_rate)
 {
     fireRate = fire_rate;
 }
 
-int Plant::setSplash(int num_splash)
+void Plant::setSplash(int num_splash)
 {
     splash = num_splash;
 }
 
-int Plant::setSlow(int num_slow)
+void Plant::setSlow(int num_slow)
 {
     slow = num_slow;
 }
 
-int Plant::setBomb(int num_bomb)
+void Plant::setBomb(int num_bomb)
 {
     bomb = num_bomb;
 }
 
-double Plant::setSeeding(int seeding_time)
+void Plant::setSeeding(int seeding_time)
 {
     seeding = seeding_time;
 }
 
-int Plant::setSun(int num_sun)
+void Plant::setSun(int num_sun)
 {
     sun = num_sun;
 }
 
-int Plant::setNeed(int num_need)
+void Plant::setNeed(int num_need)
 {
     need = num_need;
+}
+
+string Plant::getName()
+{
+    return name;
+}
+
+int Plant::getCost()
+{
+    return cost;
+}
+
+int Plant::getLife()
+{
+    return life;
+}
+
+int Plant::getRange()
+{
+    return range;
+}
+
+int Plant::getDamage()
+{
+    return damage;
+}
+
+double Plant::getFireRate()
+{
+    return fireRate;
+}
+
+int Plant::getSplash()
+{
+    return splash;
+}
+
+int Plant::getSlow()
+{
+    return slow;
+}
+
+int Plant::getBomb()
+{
+    return bomb;
+}
+
+double Plant::getSeeding()
+{
+    return seeding;
+}
+
+int Plant::getSun()
+{
+    return sun;
+}
+
+int Plant::getNeed()
+{
+    return need;
 }

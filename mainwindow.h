@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QRect>
 #include <vector>
+#include "plant.h"
 
 using std::vector;
 
@@ -51,6 +52,8 @@ private:
     GameManager * gameManager;
     vector<User *> users;
     vector<Level *> levels;
+    vector<Plant *> plants;
+    Plant * currentPlant;
     int plantIndex;
 };
 
