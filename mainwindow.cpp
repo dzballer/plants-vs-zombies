@@ -41,7 +41,15 @@ MainWindow::MainWindow(QWidget *parent) :
    gameManager->readPlayersFile(":/pvz files/pvz_players.csv"); // Reading and parsing players file
    gameManager->readLevelsFile(":/pvz files/pvz_levels.csv"); // Reading and parsing levels file
 
+    users = gameManager->getUserVector();
+    levels = gameManager->getLevelVector();
 
+    ui->userComboBox->clear();
+    for (int i = 0; i<users.size(); i++)
+    {
+        ui->userComboBox->addItem(QString::fromStdString(users[i]->getName()),i);
+        //ui->userComboBox->addItem("poop",i);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -90,3 +98,14 @@ void MainWindow::on_p8Button_clicked()
 
 }
 
+
+void MainWindow::on_userComboBox_currentIndexChanged(int index)
+{
+    //ui->nameLineEdit->setText(QString::fromStdString(users[index]->getName()));
+    //ui->levelLineEdit->setText(QString::fromStdString(users[index]->getName()));
+}
+
+void MainWindow::on_deleteButton_clicked()
+{
+
+}

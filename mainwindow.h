@@ -9,7 +9,9 @@
 #include <QGraphicsScene>
 #include <QFileDialog>
 #include <QRect>
+#include <vector>
 
+using std::vector;
 
 namespace Ui {
 class MainWindow;
@@ -40,9 +42,15 @@ private slots:
 
     void on_p8Button_clicked();
 
+    void on_userComboBox_currentIndexChanged(int index);
+
+    void on_deleteButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     GameManager * gameManager;
+    vector<User *> users;
+    vector<Level *> levels;
     int plantIndex;
 };
 

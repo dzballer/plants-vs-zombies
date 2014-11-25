@@ -13,6 +13,7 @@
 //#include "ui_mainwindow.h"
 //#include "mainwindow.h"
 #include <QImage>
+#include "plant.h"
 
 using std::string;
 using std::vector;
@@ -22,6 +23,7 @@ class GameManager
 private:
     std::vector<User *> userVector;
     std::vector<Level *> levelVector;
+    std::vector<Plant> plantVector;
 
     int mIndex;
     QFile mFile;
@@ -31,11 +33,12 @@ public:
     //void readFile();
     void readPlayersFile(QString file_name);
     void readLevelsFile(QString file_name);
+    void readPlantsFile(QString file_name);
     void saveFile(vector<User *> user_vector, User * current_user);
     void retImage(QString image_path);
     void displayImage(QImage * image);
-    void getUserVector();
-    void getLevelVector();
+    vector<User *> getUserVector();
+    vector<Level *> getLevelVector();
     //void addUser();
     //void delUser();
     //void selUser();

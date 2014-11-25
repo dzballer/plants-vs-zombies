@@ -24,6 +24,7 @@ private:
     QImage * mImage;
 public:
     Plant();
+
 };
 
 #endif // PLANT_H
