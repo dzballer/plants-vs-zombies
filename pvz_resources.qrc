@@ -18,9 +18,9 @@
         <file>zombie.h</file>
         <file>pvz files/pvz_levels.csv</file>
         <file>pvz images/lawn.jpg</file>
-        <file>pvz files/pvz_players-test-2c1.csv</file>
         <file>pvz files/pvz_players-test-2d1.csv</file>
         <file>pvz files/pvz_players-test-2e1.csv</file>
         <file>pvz files/pvz_players-test-2e2.csv</file>
+        <file>pvz files/pvz_plants.csv</file>
     </qresource>
 </RCC>

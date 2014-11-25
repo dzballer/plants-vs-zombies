@@ -171,16 +171,8 @@ void GameManager::readLevelsFile(QString file_name)
 
 void GameManager::readPlantsFile(QString file_name)
 {
-    /*string playersFileName = "pvz_players.csv";
-    string levelsFileName = "pvz_levels.csv";
-
-    QFile playersFile;*/
-
     mFile.setFileName(file_name);
     qDebug() << file_name;
-
-    //QFileInfo file(mFile); // to get path
-    //mPath = file.path();
 
     if (!mFile.open((QIODevice::ReadOnly | QIODevice::Text))) // error checking
     {
@@ -194,13 +186,11 @@ void GameManager::readPlantsFile(QString file_name)
     {
         int i = 1; // Using as a line counter for debugging
         QString currentLine = in.readLine();
-        QStringList fileList = currentLine.split(":");
+        QStringList fileList = currentLine.split(" ");
 
-        if (fileList.count() == 3) // Checking if User file or Players file
+        if (fileList.count() == 13) // Checking if User file or Players file
         {
-            //QRegExp re("\\d*"); // a digit (\d), zero or more times (*)
-
-            //if (fileList.at(1).contains(QRegExp( "[-`~!@#$%}^&*()_—+=|:;<>«»,.?/{}\'\"\\\[\\\]\\\\]")) || /*!fileList.at(1).contains("[^a-zA-Z\\d\\s]") ||*/ fileList.at(1).size() > 10)
+            // Checking if alphanumeric
             for (int i = 0; i < fileList.count(); i++)
             {
                 for (int j = 0; j < fileList.at(1).size(); j++)
@@ -213,36 +203,31 @@ void GameManager::readPlantsFile(QString file_name)
                     }
                 }
             }
-            /*{
-                qDebug() << fileList.at(1) << "'s' data could not be read. File will be discarded.\n";
-                mFile.close();
-                return;
-            }*.
 
-            QRegExp rx("\\w{0,9}");
-                QRegExpValidator validator (rx,0);
-             int pos=0;
-             if (validator.validate(userName,pos)==QValidator::Acceptable|| validator.validate(userName,pos)==QValidator::Intermediate)
-             {
-                 qDebug()<<"validation complete";
-                 return 1;
-
-             }
-             else {qDebug()<<"not validated";
-                 return false;}*/
-
-            //  Creating aUser on the heap and passing fileList elements to the optional constructor,
-            // thereby assigning the level, name, and timestamp to the new User.
-            User * aUser = new User(fileList.at(0).toInt(), fileList.at(1).toStdString(), fileList.at(2).toInt()); // * remember to delete
-            userVector.push_back(aUser);
-            qDebug() << fileList.at(1) << "'s user data read and parsed successfully.";
+            // Creating aPlant and assigning all members from plants data file
+            Plant aPlant;
+            aPlant.setIndex(fileList.at(0).toInt());
+            qDebug() << ""; // If this is not here program crashes
+            aPlant.setName(fileList.at(1).toStdString());
+            aPlant.setCost(fileList.at(2).toInt());
+            aPlant.setLife(fileList.at(3).toInt());
+            aPlant.setRange(fileList.at(4).toInt());
+            aPlant.setDamage(fileList.at(5).toInt());
+            aPlant.setFireRate(fileList.at(6).toDouble());
+            aPlant.setSplash(fileList.at(7).toInt());
+            aPlant.setSlow(fileList.at(8).toInt());
+            aPlant.setBomb(fileList.at(9).toInt());
+            aPlant.setSeeding(fileList.at(10).toInt());
+            aPlant.setSun(fileList.at(11).toInt());
+            aPlant.setNeed(fileList.at(12).toInt());
+            plantVector.push_back(aPlant);
+            qDebug() << fileList.at(1) << "'s plant data read and parsed successfully.";
         }
         else
         {
             qDebug() << "Unable to read/parse file on line" << i << ": File has errors.";
             return;
         }
-
         i++; // Increasing line count
     }
 

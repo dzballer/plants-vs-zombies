@@ -40,12 +40,13 @@ MainWindow::MainWindow(QWidget *parent) :
 //gameManager->readPlayersFile(":/pvz files/pvz_players-test-2e2.csv");
    gameManager->readPlayersFile(":/pvz files/pvz_players.csv"); // Reading and parsing players file
    gameManager->readLevelsFile(":/pvz files/pvz_levels.csv"); // Reading and parsing levels file
+   gameManager->readPlantsFile(":/pvz files/pvz_plants.csv"); // Reading and parsing plants data
 
     users = gameManager->getUserVector();
     levels = gameManager->getLevelVector();
 
     ui->userComboBox->clear();
-    for (int i = 0; i<users.size(); i++)
+    for (int i = 0; i<int(users.size()); i++)
     {
         ui->userComboBox->addItem(QString::fromStdString(users[i]->getName()),i);
         //ui->userComboBox->addItem("poop",i);
