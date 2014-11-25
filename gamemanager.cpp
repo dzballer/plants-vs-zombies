@@ -67,7 +67,6 @@ void GameManager::readFile(QString file_name)
     mFile.close(); // Flushes then closes file
 }
 
-
 /*
 QImage GameManager::retImage(QString image_path)
 {
@@ -87,7 +86,7 @@ QImage GameManager::retImage(QString image_path)
 }
 */
 
-void GameManager::displayImage(QImage * image)
+/*void GameManager::displayImage(QImage * image)
 {
     QImage * pImage;
 
@@ -104,8 +103,10 @@ void GameManager::displayImage(QImage * image)
         //pixma = pixma.scaledToWidth(); // scaling pixma
         delete pImage;
     }
-}
+}*/
 
-GameManager::GameManager()
+/*void GameManager::addUser()
 {
+
 }
+*/

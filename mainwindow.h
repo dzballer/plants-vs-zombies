@@ -3,10 +3,13 @@
 
 #include <QMainWindow>
 #include "gamemanager.h"
-#include "ui_mainwindow.h"
-#include "mainwindow.h"
 #include "lawn.h"
 #include <QImage>
+#include "ui_mainwindow.h"
+#include <QGraphicsScene>
+#include <QFileDialog>
+#include <QRect>
+
 
 namespace Ui {
 class MainWindow;
@@ -25,9 +28,9 @@ private slots:
 
     void on_p1Button_clicked();
 
-    void on_p3Button_clicked();
-
     void on_p2Button_clicked();
+
+    void on_p3Button_clicked();
 
     void on_p4Button_clicked();
 
@@ -38,6 +41,7 @@ private slots:
     void on_p7Button_clicked();
 
     void on_p8Button_clicked();
+
 private:
     Ui::MainWindow *ui;
     GameManager * gameManager;

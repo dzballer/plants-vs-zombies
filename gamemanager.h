@@ -3,15 +3,15 @@
 
 #include "user.h"
 #include "level.h"
+#include "lawn.h"
 #include <vector>
 #include <QString>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
 #include <QDebug>
-#include "ui_mainwindow.h"
+//#include "ui_mainwindow.h"
 //#include "mainwindow.h"
-#include "lawn.h"
 #include <QImage>
 
 using std::string;
@@ -27,11 +27,14 @@ private:
     QString mFileName, mPath;
 
 public:
-    void readFile();
+    //void readFile();
     void readFile(QString file_name);
     void retImage(QString image_path);
     void displayImage(QImage * image);
-    GameManager();
+    //void addUser();
+    //void delUser();
+    //void selUser();
 };
 
 #endif // GAMEMANAGER_H
+

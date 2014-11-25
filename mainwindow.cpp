@@ -1,23 +1,19 @@
 #include "mainwindow.h"
 
-#include <QGraphicsScene>
-#include <QFileDialog>
-#include <QRect>
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(close()));
-    gameManager = new GameManager();
+    gameManager = new GameManager(); // need to delete
 
     //QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("CSV Files (*.csv);;All Files (*.*)"));
     //qDebug() << fileName;
 
     QGraphicsScene * scene;
 
-    scene = new QGraphicsScene;
+    scene = new QGraphicsScene; // need to delete
 
 
     // loading lawn backgorund
@@ -91,3 +87,4 @@ void MainWindow::on_p8Button_clicked()
 {
 
 }
+

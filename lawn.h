@@ -2,6 +2,8 @@
 #define LAWN_H
 
 #include <QGraphicsView>
+#include <QDebug>
+#include <QMouseEvent>
 
 class Lawn : public QGraphicsView
 {
