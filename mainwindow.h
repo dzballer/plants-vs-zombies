@@ -49,6 +49,8 @@ private slots:
 
     void on_newButton_clicked();
 
+    void on_startButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     GameManager * gameManager;

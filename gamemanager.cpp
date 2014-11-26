@@ -70,6 +70,7 @@ void GameManager::readPlayersFile(QString file_name)
             User * aUser = new User(fileList.at(0).toInt(), fileList.at(1).toStdString(), fileList.at(2).toInt()); // * remember to delete
             userVector.push_back(aUser);
             qDebug() << fileList.at(1) << "'s user data read and parsed successfully.";
+            //delete aUser;
         }
         else
         {
@@ -153,8 +154,7 @@ void GameManager::readLevelsFile(QString file_name)
                                        fileList.at(3).toInt(), fileList.at(4).toInt(), fileList.at(5).toDouble());
             levelVector.push_back(aLevel); // *remember to delete
             qDebug() << "Level " << fileList.at(0) << " level data read and parsed successfully.";
-
-            delete aLevel;
+            //delete aLevel;
         }
         else
         {
@@ -221,6 +221,7 @@ void GameManager::readPlantsFile(QString file_name)
             aPlant->setNeed(fileList.at(12).toInt());
             plantVector.push_back(aPlant);
             qDebug() << fileList.at(1) << "'s plant data read and parsed successfully.";
+            //delete aPlant;
         }
         else
         {
