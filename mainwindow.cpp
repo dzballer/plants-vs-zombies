@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QGraphicsScene * scene;
 
+    qDebug() << "git check";
+
     scene = new QGraphicsScene; // need to delete
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setStyleSheet("background: black");
