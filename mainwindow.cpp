@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(close()));
     gameManager = new GameManager(); // need to delete
 
+
+
     ui->p1Button->setEnabled(0);
     ui->p2Button->setEnabled(0);
     ui->p3Button->setEnabled(0);
@@ -47,6 +49,25 @@ MainWindow::MainWindow(QWidget *parent) :
     users = gameManager->getUserVector();
     levels = gameManager->getLevelVector();
     plants = gameManager->getPlantVector();
+
+    ui->p1Button->setIcon(QIcon(":/pvz images/" + QString::fromStdString(plants[0]->getName()) + "icon.png"));
+    ui->p1Button->setIconSize(ui->p1Button->size());
+    //qDebug()<<":/pvz images/" + QString::fromStdString(plants[1]->getName()) + "icon.png";
+    ui->p2Button->setIcon(QIcon(":/pvz images/" + QString::fromStdString(plants[1]->getName()) + "icon.png"));
+    ui->p2Button->setIconSize(ui->p2Button->size());
+    ui->p3Button->setIcon(QIcon(":/pvz images/" + QString::fromStdString(plants[2]->getName()) + "icon.png"));
+    ui->p3Button->setIconSize(ui->p3Button->size());
+    ui->p4Button->setIcon(QIcon(":/pvz images/" + QString::fromStdString(plants[3]->getName()) + "icon.png"));
+    ui->p4Button->setIconSize(ui->p4Button->size());
+    ui->p5Button->setIcon(QIcon(":/pvz images/" + QString::fromStdString(plants[4]->getName()) + "icon.png"));
+    ui->p5Button->setIconSize(ui->p5Button->size());
+    ui->p6Button->setIcon(QIcon(":/pvz images/" + QString::fromStdString(plants[5]->getName()) + "icon.png"));
+    ui->p6Button->setIconSize(ui->p6Button->size());
+    ui->p7Button->setIcon(QIcon(":/pvz images/" + QString::fromStdString(plants[6]->getName()) + "icon.png"));
+    ui->p7Button->setIconSize(ui->p7Button->size());
+    ui->p8Button->setIcon(QIcon(":/pvz images/" + QString::fromStdString(plants[7]->getName()) + "icon.png"));
+    ui->p8Button->setIconSize(ui->p8Button->size());
+    //ui->p1Button->setIcon(QIcon(":/pvz images/peashootericon.png"));
 
     ui->userComboBox->clear();
     ui->userComboBox->addItem("Users"); // Setting initial ComboBox label to "Users" with an irrelevant index

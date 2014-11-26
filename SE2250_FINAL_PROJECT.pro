@@ -33,4 +33,4 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 RESOURCES += \
-    pvz_resources.qrc
+    pvz.qrc

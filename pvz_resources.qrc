@@ -24,5 +24,19 @@
         <file>pvz files/pvz_plants.csv</file>
         <file>pvz images/titlepage.png</file>
         <file>pvz images/peashooter.png</file>
+        <file>pvz images/snowpeaprojectile.png</file>
+        <file>pvz images/wallnut.png</file>
+        <file>pvz images/wallnuticon.PNG</file>
+        <file>pvz images/sunflower.png</file>
+        <file>pvz images/cherrybomb.png</file>
+        <file>pvz images/cherrybombicon.PNG</file>
+        <file>pvz images/chomper.png</file>
+        <file>pvz images/chompericon.PNG</file>
+        <file>pvz images/peashootericon.PNG</file>
+        <file>pvz images/potatomineicon.PNG</file>
+        <file>pvz images/repeater.png</file>
+        <file>pvz images/repeatericon.PNG</file>
+        <file>pvz images/snowpea.png</file>
+        <file>pvz images/snowpeaicon.PNG</file>
     </qresource>
 </RCC>

@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>pvz files/pvz_levels.csv</file>
+        <file>pvz files/pvz_players.csv</file>
+        <file>pvz files/pvz_plants.csv</file>
+        <file>pvz images/sunflower.png</file>
+        <file>pvz images/titlepage.png</file>
+        <file>pvz images/lawn.jpg</file>
+        <file>pvz images/cherrybomb.png</file>
+        <file>pvz images/cherrybombicon.png</file>
+        <file>pvz images/chomper.png</file>
+        <file>pvz images/peashooter.png</file>
+        <file>pvz images/peashootericon.png</file>
+        <file>pvz images/potatomine.png</file>
+        <file>pvz images/potatomineicon.png</file>
+        <file>pvz images/repeater.png</file>
+        <file>pvz images/repeatericon.png</file>
+        <file>pvz images/snowpea.png</file>
+        <file>pvz images/snowpeaicon.png</file>
+        <file>pvz images/snowpeaprojectile.png</file>
+        <file>pvz images/wallnut.png</file>
+        <file>pvz images/wallnuticon.png</file>
+        <file>pvz images/chompericon.png</file>
+        <file>pvz images/sun.png</file>
+        <file>pvz images/sunflowericon.png</file>
+    </qresource>
+</RCC>
