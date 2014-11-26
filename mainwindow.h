@@ -11,8 +11,12 @@
 #include <QRect>
 #include <vector>
 #include "plant.h"
+#include <QMouseEvent>
 
 using std::vector;
+
+const int lawnLeft = 180, lawnRight = 700, lawnTop = 55, lawnBottom = 410;
+const int lawnWidth = lawnRight-lawnLeft, lawnHeight = lawnBottom-lawnTop;
 
 namespace Ui {
 class MainWindow;
@@ -26,7 +30,11 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void mousePressEvent(QMouseEvent * e);
+
 private slots:
+    void drawPlantChecker();
+
     void on_p1Button_clicked();
 
     void on_p2Button_clicked();
@@ -51,8 +59,11 @@ private slots:
 
     void on_startButton_clicked();
 
+
+
 private:
     Ui::MainWindow *ui;
+    QGraphicsScene * scene;
     GameManager * gameManager;
     vector<User *> users;
     vector<Level *> levels;
@@ -60,6 +71,9 @@ private:
     Plant * currentPlant;
     User * currentUser;
     int plantIndex;
+    bool plantReady;
+    QPoint lastClick;
+    QTimer * timer;
 };
 
 #endif // MAINWINDOW_H

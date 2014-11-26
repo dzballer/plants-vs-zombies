@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include <QGraphicsPixmapItem>
+#include <QTimer>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,9 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->restartButton->setEnabled(0);
     ui->levelLineEdit->setReadOnly(1);
 
-    QGraphicsScene * scene;
-
-    qDebug() << "git check";
+    plantReady = false;
 
     scene = new QGraphicsScene; // need to delete
     ui->graphicsView->setScene(scene);
@@ -35,13 +35,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QGraphicsPixmapItem *pm = scene->addPixmap(titlePage);
     //qDebug() << titlePage.width() << " " << titlePage.height();
     pm->setPos((ui->graphicsView->width()-titlePage.width())/2, 0);
-
-
-
-
-    // buttons disabled before user and level are set
-   // ui->Button->setEnabled(false); // disables the forward and backward buttons because they have no function before file is loaded
-    //ui->backwardButton->setEnabled(false);
 
 //gameManager->readPlayersFile(":/pvz files/pvz_players-test-2c1.csv");
 //gameManager->readPlayersFile(":/pvz files/pvz_players-test-2d1.csv");
@@ -64,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->userComboBox->addItem(QString::fromStdString(users[i]->getName()),i);
         //ui->userComboBox->addItem("poop",i);
     }
+
+    //QPoint lastClick = ui->graphicsView->getPos();
 }
 
 MainWindow::~MainWindow()
@@ -72,16 +67,57 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// Doesn't work because graphicsView clicks do not register in MainWindow lol
+void MainWindow::mousePressEvent(QMouseEvent *e)
+{
+    lastClick = e->pos();
+
+    if (plantReady == true  && ui->graphicsView->getReady())
+    {
+        /*QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
+        plant = plant.scaled(50,50);
+        QGraphicsPixmapItem * plantItem = scene->addPixmap(plant);
+        //plantItem->setPixmap(QPixmap::fromImage(":/pvz images/" + QString::fromStdString(currentPlant->getName() + ".png").scaled(50,50));
+        plantItem->setPos(lastClick);*/
+
+        qDebug() << lastClick;
+    }
+    qDebug() << lastClick;
+    plantReady = false; // leave this here important
+}
+
+// Runs on a timer and checks if two boolean conditions are met. Draws pixmap and adds to scene if conditions are satisfied.
+void MainWindow::drawPlantChecker()
+{
+    if (plantReady == true && ui->graphicsView->getReady())
+    {
+        //QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
+        QPixmap plant(":/pvz images/peashooter.png");
+        //qDebug() << ":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png";
+        plant = plant.scaled(50,50);
+        QGraphicsPixmapItem * plantItem = scene->addPixmap(plant);
+        //plantItem->setPixmap(QPixmap::fromImage(":/pvz images/" + QString::fromStdString(currentPlant->getName() + ".png").scaled(50,50));
+        plantItem->setPos(ui->graphicsView->getPos());
+        plantReady = false;
+
+        //qDebug() << "draw is ready";
+    }
+
+    ui->graphicsView->setReady(false); // Always turning it off so that its significance is only when clicked
+}
+
 void MainWindow::on_p1Button_clicked()
 {
     currentPlant = plants[0]; // Sets current plant pointer to selected plant in the plants vector
     std::cout << plants[0]->getName() << " selected\n";
+    plantReady = true;
 }
 
 void MainWindow::on_p2Button_clicked()
 {
     currentPlant = plants[1];
     std::cout << plants[1]->getName() << " selected\n";
+    plantReady = true;
 }
 
 void MainWindow::on_p3Button_clicked()
@@ -94,36 +130,46 @@ void MainWindow::on_p4Button_clicked()
 {
     currentPlant = plants[3];
     std::cout << plants[3]->getName() << " selected\n";
+    plantReady = true;
 }
 
 void MainWindow::on_p5Button_clicked()
 {
     currentPlant = plants[4];
     std::cout << plants[4]->getName() << " selected\n";
+    plantReady = true;
 }
 
 void MainWindow::on_p6Button_clicked()
 {
     currentPlant = plants[5];
     std::cout << plants[5]->getName() << " selected\n";
+    plantReady = true;
 }
 
 void MainWindow::on_p7Button_clicked()
 {
     currentPlant = plants[6];
     std::cout << plants[6]->getName() << " selected\n";
+    plantReady = true;
 }
 
 void MainWindow::on_p8Button_clicked()
 {
     currentPlant = plants[7];
     std::cout << plants[7]->getName() << " selected\n";
+    plantReady = true;
 }
 
 
 void MainWindow::on_userComboBox_currentIndexChanged(int index)
 {
-    if (index > 0) // For some reason the index is -1 and 0(?) at startup.
+    if (index == 0)
+    {
+        ui->nameLineEdit->setText("");
+        ui->levelLineEdit->setText("Select User");
+    }
+    else if (index > 0) // For some reason the index is -1 and 0(?) at startup.
     {
         ui->nameLineEdit->setText(QString::fromStdString(users[index-1]->getName()));
         ui->levelLineEdit->setText("Level: " + QString::number(users[index-1]->getLevel()));
@@ -152,6 +198,11 @@ void MainWindow::on_newButton_clicked()
 
 void MainWindow::on_startButton_clicked()
 {
+    // Set up a timer which will periodicallly call the advance() method on scene object
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(drawPlantChecker()));
+    timer->start(10);
+    // Enabling buttons
     ui->p1Button->setEnabled(1);
     ui->p2Button->setEnabled(1);
     ui->p3Button->setEnabled(1);
@@ -166,14 +217,15 @@ void MainWindow::on_startButton_clicked()
     ui->userComboBox->setEnabled(0);
     ui->nameLineEdit->setReadOnly(1);
 
-    QGraphicsScene * startScene = new QGraphicsScene;
-    ui->graphicsView->setScene(startScene);
+    //QGraphicsScene * scene = new QGraphicsScene;
+
+    //ui->graphicsView->setScene(scene);
 
     // Changing background to lawn
     QPixmap lawn(":/pvz images/lawn.jpg");
     qDebug() << lawn.width() << " " << lawn.height() << " " << lawn.width()/lawn.height();
     lawn = lawn.scaledToWidth(ui->graphicsView->width());//ui->graphicsView->width());
-    startScene->addPixmap(lawn);
+    scene->addPixmap(lawn);
 
     // setting grid
     QPoint topLeft, bottomRight;
@@ -188,20 +240,20 @@ void MainWindow::on_startButton_clicked()
 
     // Draw lines to help out with general visualization
     QPen my_pen = QPen(Qt::black);
-    startScene->addLine(QLineF() ,my_pen);
-    startScene->addLine(QLineF(lawnRect.bottomLeft(), lawnRect.bottomRight()) ,my_pen);
-    startScene->addLine(QLineF(lawnRect.topLeft(), lawnRect.topRight()) ,my_pen);
-    startScene->addLine(QLineF(lawnRect.bottomLeft(), lawnRect.topLeft()) ,my_pen);
-    startScene->addLine(QLineF(lawnRect.topRight(), lawnRect.bottomRight()) ,my_pen);
+    scene->addLine(QLineF() ,my_pen);
+    scene->addLine(QLineF(lawnRect.bottomLeft(), lawnRect.bottomRight()) ,my_pen);
+    scene->addLine(QLineF(lawnRect.topLeft(), lawnRect.topRight()) ,my_pen);
+    scene->addLine(QLineF(lawnRect.bottomLeft(), lawnRect.topLeft()) ,my_pen);
+    scene->addLine(QLineF(lawnRect.topRight(), lawnRect.bottomRight()) ,my_pen);
 
     // Drawing a grid to help with visualization
     for (int i=-1; i<9; i++)
     {
-        startScene->addLine(left+i*width/9,top,left+i*width/9, bottom); // drawing vertical
+        scene->addLine(left+i*width/9,top,left+i*width/9, bottom); // drawing vertical
     }
     for (int i=0; i<6; i++)
     {
-        startScene->addLine(left-width/9,top+i*height/5,right,top+i*height/5); // drawing horizontal
+        scene->addLine(left-width/9,top+i*height/5,right,top+i*height/5); // drawing horizontal
     }
 
 

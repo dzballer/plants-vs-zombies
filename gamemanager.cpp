@@ -3,8 +3,6 @@
 
 void GameManager::readPlayersFile(QString file_name)
 {
-
-
     /*string playersFileName = "pvz_players.csv";
     string levelsFileName = "pvz_levels.csv";
 

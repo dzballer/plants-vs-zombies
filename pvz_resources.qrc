@@ -23,5 +23,6 @@
         <file>pvz files/pvz_players-test-2e2.csv</file>
         <file>pvz files/pvz_plants.csv</file>
         <file>pvz images/titlepage.png</file>
+        <file>pvz images/peashooter.png</file>
     </qresource>
 </RCC>
