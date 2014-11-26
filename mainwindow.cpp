@@ -113,9 +113,9 @@ void MainWindow::drawPlantChecker()
     if (plantReady == true && ui->graphicsView->getReady())
     {
         //QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
-        QPixmap plant(":/pvz images/peashooter.png");
-        //qDebug() << ":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png";
-        plant = plant.scaled(50,50);
+        QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
+       qDebug() << ":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png";
+        plant = plant.scaledToWidth(lawnWidth/9);
         QGraphicsPixmapItem * plantItem = scene->addPixmap(plant);
         //plantItem->setPixmap(QPixmap::fromImage(":/pvz images/" + QString::fromStdString(currentPlant->getName() + ".png").scaled(50,50));
         plantItem->setPos(ui->graphicsView->getPos());
@@ -145,6 +145,7 @@ void MainWindow::on_p3Button_clicked()
 {
     currentPlant = plants[2];
     std::cout << plants[2]->getName() << " selected\n";
+    plantReady = true;
 }
 
 void MainWindow::on_p4Button_clicked()
