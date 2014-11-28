@@ -3,10 +3,11 @@
 
 #include <string>
 #include <QImage>
+#include <QGraphicsPixmapItem>
 
 using std::string;
 
-class Plant
+class Plant : QGraphicsPixmapItem
 {
 private:
     int index;

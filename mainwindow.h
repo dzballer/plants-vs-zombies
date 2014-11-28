@@ -12,6 +12,8 @@
 #include <vector>
 #include "plant.h"
 #include <QMouseEvent>
+#include <sun.h>
+#include <QElapsedTimer>
 
 using std::vector;
 
@@ -33,7 +35,11 @@ public:
     void mousePressEvent(QMouseEvent * e);
 
 private slots:
+    void uiUpdater();
+
     void drawPlantChecker();
+
+    void sunDropper();
 
     void on_p1Button_clicked();
 
@@ -59,8 +65,6 @@ private slots:
 
     void on_startButton_clicked();
 
-
-
 private:
     Ui::MainWindow *ui;
     QGraphicsScene * scene;
@@ -68,12 +72,23 @@ private:
     vector<User *> users;
     vector<Level *> levels;
     vector<Plant *> plants;
+    vector<QPointF> existingPlants; // Using to check if plants have already been drawn. Stores already existing plant coordinates.
     Plant * currentPlant;
     User * currentUser;
     int plantIndex;
     bool plantReady;
     QPoint lastClick;
+    QPointF itemPos;
     QTimer * timer;
+    QTimer * sunTimer;
+    QTimer * uiTimer;
+    QElapsedTimer * sunDropTimer;
+    int sunPoints;
+    int sunTimeCounter;
+    int rows;
+    int columns;
+    vector <vector<QPointF> > grid; // grid
+    vector <Sun*> suns;
 };
 
 #endif // MAINWINDOW_H

@@ -19,7 +19,9 @@ SOURCES += main.cpp\
     user.cpp \
     lawn.cpp \
     plant.cpp \
-    zombie.cpp
+    zombie.cpp \
+    pvz images/sun.cpp \
+    sun.cpp
 
 HEADERS  += mainwindow.h \
     ../user.h \
@@ -28,7 +30,9 @@ HEADERS  += mainwindow.h \
     user.h \
     lawn.h \
     plant.h \
-    zombie.h
+    zombie.h \
+    pvz images/sun.h \
+    sun.h
 
 FORMS    += mainwindow.ui
 

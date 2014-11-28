@@ -1,17 +1,20 @@
 #include "mainwindow.h"
 #include <QGraphicsPixmapItem>
 #include <QTimer>
+#include <QTime>
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow), currentPlant(NULL), sunPoints(0), sunTimeCounter(0), rows(5), columns(9), grid(rows, std::vector<QPointF>(columns))
 {
+    qsrand(QTime::currentTime().msec());
+
     ui->setupUi(this);
     connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(close()));
     gameManager = new GameManager(); // need to delete
 
-
+    ui->sunpointsLabel->setText(QString::number(sunPoints));
 
     ui->p1Button->setEnabled(0);
     ui->p2Button->setEnabled(0);
@@ -38,6 +41,28 @@ MainWindow::MainWindow(QWidget *parent) :
     //qDebug() << titlePage.width() << " " << titlePage.height();
     pm->setPos((ui->graphicsView->width()-titlePage.width())/2, 0);
 
+    // Implementing a 5x9 grid
+    //vector<vector<QPointF> > grid(rows, std::vector<QPointF>(columns));
+    for(int i=0; i<rows; i++)
+    {
+        for(int j=0; j<columns; j++)
+        {
+            int x = lawnLeft + j*lawnWidth/9;
+            int y = lawnTop + i*lawnHeight/5;
+            QPointF gridPoint;
+            gridPoint.setX(x);
+            gridPoint.setY(y);
+            grid[i][j] = gridPoint;
+        }
+    }
+
+    for(int i=0; i<rows; i++)
+    {
+        for(int j=0; j<columns; j++)
+        {
+            qDebug() << grid[i][j];
+        }
+    }
 //gameManager->readPlayersFile(":/pvz files/pvz_players-test-2c1.csv");
 //gameManager->readPlayersFile(":/pvz files/pvz_players-test-2d1.csv");
 //gameManager->readPlayersFile(":/pvz files/pvz_players-test-2e1.csv");
@@ -91,20 +116,13 @@ MainWindow::~MainWindow()
 // Doesn't work because graphicsView clicks do not register in MainWindow lol
 void MainWindow::mousePressEvent(QMouseEvent *e)
 {
-    lastClick = e->pos();
+    e->ignore(); // Using the parameter (might be useless lol)
+    plantReady = false; // If user clicks anywhere outside of graphicsview, the plantReady will be terminated
+}
 
-    if (plantReady == true  && ui->graphicsView->getReady())
-    {
-        /*QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
-        plant = plant.scaled(50,50);
-        QGraphicsPixmapItem * plantItem = scene->addPixmap(plant);
-        //plantItem->setPixmap(QPixmap::fromImage(":/pvz images/" + QString::fromStdString(currentPlant->getName() + ".png").scaled(50,50));
-        plantItem->setPos(lastClick);*/
-
-        qDebug() << lastClick;
-    }
-    qDebug() << lastClick;
-    plantReady = false; // leave this here important
+void MainWindow::uiUpdater()
+{
+    ui->sunpointsLabel->setText(QString::number(sunPoints));
 }
 
 // Runs on a timer and checks if two boolean conditions are met. Draws pixmap and adds to scene if conditions are satisfied.
@@ -112,19 +130,126 @@ void MainWindow::drawPlantChecker()
 {
     if (plantReady == true && ui->graphicsView->getReady())
     {
+        if (currentPlant!=NULL) // Or else comparison won't be allowed
+        {
+            if(sunPoints < currentPlant->getCost()) // Check if sufficient sunPoints.
+            {
+                qDebug() << "Not enough sunpoints.";
+                plantReady = 0;
+                return;
+            }
+        }
+
+        QPointF lastclick = ui->graphicsView->getPos();
+
+        int y = (lastclick.y()-lawnTop)/(lawnHeight/5); // outputting the clicked grid row x column
+        int x =  (lastclick.x()-lawnLeft)/(lawnWidth/9);
+
+        qDebug() << x << " " << y;
+
+        // Fitting image into the click
+        int gridX = lawnLeft + int(lastclick.x()-lawnLeft)/(lawnWidth/9) * (lawnWidth/9); // Allows the last click to round to the vertical line close-left to the click
+        int gridY = lawnTop + int(lastclick.y()-lawnTop)/(lawnHeight/5) * (lawnHeight/5); // Allows last click to round to the horizontal line close-top to the click
+
+        itemPos.setX(gridX);
+        itemPos.setY(gridY);
+
+        for(int i = 0; i<int(existingPlants.size()); i++)
+        {
+            //qDebug() << itemPos << " " << existingPlants[i] << "pop";
+            if(itemPos == existingPlants[i])
+            {
+                qDebug() << "Error: Plant already exists";
+                plantReady = 0;
+                return;
+            }
+        }
+
+        existingPlants.push_back(itemPos);
+
+        //qDebug() << "Current existing plants: ";
+        //for(int i=0; i<existingPlants.size(); i++)
+        //    qDebug() << existingPlants[i];
+
+        //Drawing
         //QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
         QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
-       qDebug() << ":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png";
+        qDebug() << ":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png";
         plant = plant.scaledToWidth(lawnWidth/9);
         QGraphicsPixmapItem * plantItem = scene->addPixmap(plant);
         //plantItem->setPixmap(QPixmap::fromImage(":/pvz images/" + QString::fromStdString(currentPlant->getName() + ".png").scaled(50,50));
-        plantItem->setPos(ui->graphicsView->getPos());
-        plantReady = false;
 
+        plantItem->setPos(itemPos);
+        //plantItem->setPos(ui->graphicsView->getPos());
+        plantReady = false;
         //qDebug() << "draw is ready";
+        sunPoints -= currentPlant->getCost();
     }
 
     ui->graphicsView->setReady(false); // Always turning it off so that its significance is only when clicked
+}
+
+void MainWindow::sunDropper()
+{
+    for(int i=0; i<int(suns.size()); i++)
+    {
+        if(suns[i]->getDuration() >= 3000)
+        {
+            //vector<Sun*>::iterator iter;
+            //for(int j=0; j<i; iter++, j++);
+            delete suns[i];
+            suns.erase(suns.begin()+i);
+        }
+        else if(suns[i]->getDeleteReady())
+        {
+            sunPoints += 25;
+            delete suns[i];
+            suns.erase(suns.begin()+i);
+            qDebug() << "deleted";
+        }
+    }
+
+    /*for(int i=0; i<int(suns.size()); i++)
+        {
+            if(suns[i]->getSunTime() >= 200000)
+            {
+                //vector<Sun*>::iterator iter;
+                //for(int j=0; j<i; iter++, j++);
+                suns.erase(suns.begin()+i);
+                delete suns[i];
+            }
+            else if(suns[i]->getDeleteReady())
+            {
+                suns.erase(suns.begin()+i);
+                delete suns[i];
+                qDebug() << "deleted";
+            }
+        }*/
+
+    if(sunTimeCounter%3000 == 0 && sunTimeCounter != 0)
+    {
+        Sun *sun = new Sun;
+        QPixmap sunPixmap(":/pvz images/sun.png");
+        sunPixmap = sunPixmap.scaledToWidth(lawnWidth/columns);
+        sun->setPixmap(sunPixmap);
+        scene->addItem(sun);
+
+        // Randomizing a grid coordinate for the sundrop
+        int randRow = qrand()%(rows); // /(double(RAND_MAX)+1);
+        int randColumn = qrand()%(columns);
+
+        QPointF randPoint = grid[randRow][randColumn];
+        sun->setPos(randPoint);
+
+        //sun->advance(10);
+        //sun->setPos(itemPos);
+        suns.push_back(sun);
+    }
+    sunTimeCounter += 50;
+    for(int i=0; i<int(suns.size()); i++)
+    {
+        suns[i]->setDuration(suns[i]->getDuration()+50);
+    }
 }
 
 void MainWindow::on_p1Button_clicked()
@@ -190,9 +315,13 @@ void MainWindow::on_userComboBox_currentIndexChanged(int index)
     {
         ui->nameLineEdit->setText("");
         ui->levelLineEdit->setText("Select User");
+        ui->deleteButton->setEnabled(0);
+        //ui->startButton->setEnabled(0);
     }
     else if (index > 0) // For some reason the index is -1 and 0(?) at startup.
     {
+        ui->deleteButton->setEnabled(1);
+        ui->startButton->setEnabled(1);
         ui->nameLineEdit->setText(QString::fromStdString(users[index-1]->getName()));
         ui->levelLineEdit->setText("Level: " + QString::number(users[index-1]->getLevel()));
     }
@@ -201,11 +330,19 @@ void MainWindow::on_userComboBox_currentIndexChanged(int index)
 
 void MainWindow::on_deleteButton_clicked()
 {
-    int currentIndex = ui->userComboBox->currentIndex();
-    currentUser = users[currentIndex-1];
-    delete users[currentIndex-1];
-    users.erase(users.begin()+currentIndex-1);
-    ui->userComboBox->removeItem(currentIndex);
+    if(users.size() != 0)
+    {
+        int currentIndex = ui->userComboBox->currentIndex();
+        currentUser = users[currentIndex-1];
+        delete users[currentIndex-1];
+        users.erase(users.begin()+currentIndex-1);
+        ui->userComboBox->removeItem(currentIndex);
+    }
+    else
+    {
+        qDebug() << "Nothing to delete.";
+        return;
+    }
 }
 
 void MainWindow::on_newButton_clicked()
@@ -220,10 +357,6 @@ void MainWindow::on_newButton_clicked()
 
 void MainWindow::on_startButton_clicked()
 {
-    // Set up a timer which will periodicallly call the advance() method on scene object
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(drawPlantChecker()));
-    timer->start(10);
     // Enabling buttons
     ui->p1Button->setEnabled(1);
     ui->p2Button->setEnabled(1);
@@ -235,6 +368,7 @@ void MainWindow::on_startButton_clicked()
     ui->p8Button->setEnabled(1);
     ui->newButton->setEnabled(0);
     ui->deleteButton->setEnabled(0);
+    ui->startButton->setEnabled(0);
     ui->restartButton->setEnabled(1);
     ui->userComboBox->setEnabled(0);
     ui->nameLineEdit->setReadOnly(1);
@@ -278,6 +412,30 @@ void MainWindow::on_startButton_clicked()
         scene->addLine(left-width/9,top+i*height/5,right,top+i*height/5); // drawing horizontal
     }
 
+    // Set up a timer which will periodicallly call the advance() method on scene object
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(drawPlantChecker()));
+    timer->start(30);
 
+    // Set up a timer which will be responsible for dropping, deleting, and updating sunPoints
+    sunTimer = new QTimer(this);
+    connect(sunTimer, SIGNAL(timeout()), this, SLOT(sunDropper()));
+    sunTimer->start(50);
 
+    // Set up a timer that will periodically update the UI
+    uiTimer = new QTimer(this);
+    connect(uiTimer, SIGNAL(timeout()), this, SLOT(uiUpdater()));
+    uiTimer->start(30);
+
+    // Starting sunDropTimer
+    //sunDropTimer->start();
+
+    //timer->
+
+    /*Sun *sun = new Sun;
+    QPixmap sunPixmap(":/pvz images/sun.png");
+    sunPixmap = sunPixmap.scaledToWidth(lawnWidth/9);
+    sun->setPixmap(sunPixmap);
+    scene->addItem(sun);
+    sun->setPos(grid[1][1]);*/
 }
