@@ -233,6 +233,71 @@ void GameManager::readPlantsFile(QString file_name)
     mFile.close(); // Flushes then closes file
 }
 
+void GameManager::readZombiesFile(QString file_name)
+{
+    mFile.setFileName(file_name);
+    qDebug() << file_name;
+
+    if (!mFile.open((QIODevice::ReadOnly | QIODevice::Text))) // error checking
+    {
+       qDebug() << "Unable to open file for reading: An error has occurred.";
+       return;
+    }
+
+    QTextStream in(&mFile);
+
+    int i = 1; // Using as a line counter for debugging
+
+    while (!in.atEnd())
+    {
+        QString currentLine = in.readLine();
+        QStringList fileList = currentLine.split(" ");
+
+        for(int i=0; i<fileList.count(); i++)
+        qDebug() << fileList.at(i);
+
+        if (fileList.count() == 7) // Checking #elements
+        {
+            // Checking if alphanumeric
+            for (int i = 0; i < fileList.count(); i++)
+            {
+                for (int j = 0; j < fileList.at(1).size(); j++)
+                {
+                    if (!fileList.at(1).at(j).isLetterOrNumber() && !fileList.at(1).at(j).isSpace())
+                    {
+                        qDebug() << fileList.at(1) << "'s' data could not be read. File will be discarded.\n";
+                        mFile.close();
+                        return;
+                    }
+                }
+            }
+
+            // Creating aZombie and assigning all members from zombie data file
+            Zombie * aZombie = new Zombie;
+            aZombie->setIndex(fileList.at(0).toInt());
+            aZombie->setName(fileList.at(1).toStdString());
+            aZombie->setArmor(fileList.at(2).toInt());
+            aZombie->setLife(fileList.at(3).toInt());
+            aZombie->setAttack(fileList.at(4).toInt());
+            aZombie->setAttackRate(fileList.at(5).toDouble());
+            aZombie->setSpeed(fileList.at(6).toDouble());
+
+            zombieVector.push_back(aZombie);
+            qDebug() << fileList.at(1) << "'s zombie data read and parsed successfully.";
+            //delete aPlant;
+        }
+        else
+        {
+            qDebug() << "Unable to read/parse file on line" << i << ": Not enough data elements.";
+            return;
+        }
+        i++; // Increasing line count
+    }
+
+    mFile.flush();
+    mFile.close(); // Flushes then closes file
+}
+
 void GameManager::saveFile(vector<User *> user_vector, User * current_user)
 {
     QFile save_file("pvz_players.csv");
@@ -268,6 +333,11 @@ vector<Level *> GameManager::getLevelVector()
 vector<Plant *> GameManager::getPlantVector()
 {
     return plantVector;
+}
+
+vector<Zombie *> GameManager::getZombieVector()
+{
+    return zombieVector;
 }
 
 

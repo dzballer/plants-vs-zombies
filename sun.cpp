@@ -45,13 +45,14 @@ Sun::Sun() : yVelocity(10), duration(0), deleteReady(false)//, sunTimer(new QEla
 }
 
 // Timer triggers advance() method of scene, which in turn calls advance() method of each object
-void Sun::move(int phase)
+void Sun::advance(int phase)
 {
     // advance() method is called twice. Once with phase set to 0 indicating the object is about to advence
     // Second time with phase set to 1 for the actual advance.
     if(!phase) return;  // We don't do anything to prepare objects for advancing
 
-    this->pos().setY(this->pos().y() + yVelocity);
+    //this->setos().setY(this->pos().y() + yVelocity);
+    this->setPos(this->pos().x(), this->pos().y()+yVelocity);
 }
 
 /*QRectF Sun::boundingRect()

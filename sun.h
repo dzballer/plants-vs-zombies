@@ -16,7 +16,7 @@ private:
     //QElapsedTimer * sunTimer;
 public:
     Sun();
-    void move(int phase);
+    void advance(int phase);
     //QRectF boundingRect();
     //void setPos(double x, double y);
     int getDuration() const;

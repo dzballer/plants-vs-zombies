@@ -14,6 +14,7 @@
 //#include "mainwindow.h"
 #include <QImage>
 #include "plant.h"
+#include "zombie.h"
 
 using std::string;
 using std::vector;
@@ -24,6 +25,7 @@ private:
     std::vector<User *> userVector;
     std::vector<Level *> levelVector;
     std::vector<Plant *> plantVector;
+    std::vector<Zombie *> zombieVector;
 
     int mIndex;
     QFile mFile;
@@ -34,12 +36,14 @@ public:
     void readPlayersFile(QString file_name);
     void readLevelsFile(QString file_name);
     void readPlantsFile(QString file_name);
+    void readZombiesFile(QString file_name);
     void saveFile(vector<User *> user_vector, User * current_user);
     void retImage(QString image_path);
     void displayImage(QImage * image);
     vector<User *> getUserVector();
     vector<Level *> getLevelVector();
     vector<Plant *> getPlantVector();
+    vector<Zombie *> getZombieVector();
     //void addUser();
     //void delUser();
     //void selUser();

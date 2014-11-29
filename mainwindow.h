@@ -39,6 +39,8 @@ private slots:
 
     void drawPlantChecker();
 
+    void drawZombieChecker();
+
     void sunDropper();
 
     void on_p1Button_clicked();
@@ -72,19 +74,30 @@ private:
     vector<User *> users;
     vector<Level *> levels;
     vector<Plant *> plants;
+    vector<Zombie *> zombies;
+    vector<int> currentZombieSequence;
     vector<QPointF> existingPlants; // Using to check if plants have already been drawn. Stores already existing plant coordinates.
+    vector<Zombie*> existingZombies;
     Plant * currentPlant;
     User * currentUser;
+    Level * currentLevel;
+    Zombie *currentZombie;
     int plantIndex;
     bool plantReady;
     QPoint lastClick;
     QPointF itemPos;
     QTimer * timer;
+    QTimer * sceneTimer;
     QTimer * sunTimer;
     QTimer * uiTimer;
+    QTimer * zombieTimer;
     QElapsedTimer * sunDropTimer;
     int sunPoints;
     int sunTimeCounter;
+    int zombieCounter;
+    int zombieTimeCounter;
+    double lastZombieSpawnTime;
+    double zombieInterval;
     int rows;
     int columns;
     vector <vector<QPointF> > grid; // grid

@@ -6,7 +6,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), currentPlant(NULL), sunPoints(0), sunTimeCounter(0), rows(5), columns(9), grid(rows, std::vector<QPointF>(columns))
+    ui(new Ui::MainWindow), currentPlant(NULL), currentUser(NULL), currentLevel(NULL), currentZombie(NULL), sunPoints(0), sunTimeCounter(0), zombieCounter(0), zombieTimeCounter(0), lastZombieSpawnTime(0), zombieInterval(0), rows(5), columns(9), grid(rows, std::vector<QPointF>(columns))
 {
     qsrand(QTime::currentTime().msec());
 
@@ -70,10 +70,11 @@ MainWindow::MainWindow(QWidget *parent) :
     gameManager->readPlayersFile(":/pvz files/pvz_players.csv"); // Reading and parsing players file
     gameManager->readLevelsFile(":/pvz files/pvz_levels.csv"); // Reading and parsing levels file
     gameManager->readPlantsFile(":/pvz files/pvz_plants.csv"); // Reading and parsing plants data
-
+    gameManager->readZombiesFile(":/pvz files/pvz_zombies.csv"); // Reading and parsing zobies data
     users = gameManager->getUserVector();
     levels = gameManager->getLevelVector();
     plants = gameManager->getPlantVector();
+    zombies = gameManager->getZombieVector();
 
     ui->p1Button->setIcon(QIcon(":/pvz images/" + QString::fromStdString(plants[0]->getName()) + "icon.png"));
     ui->p1Button->setIconSize(ui->p1Button->size());
@@ -122,7 +123,15 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
 
 void MainWindow::uiUpdater()
 {
-    ui->sunpointsLabel->setText(QString::number(sunPoints));
+    if (ui->sunpointsLabel->text().toInt() != sunPoints)
+    {
+        ui->sunpointsLabel->setText(QString::number(sunPoints));
+    }
+
+    /*if (ui->levelLineEdit->text().toInt() != currentUser->getLevel())
+    {
+        ui->levelLineEdit->setText(QString::number(currentUser->getLevel()));
+    }*/
 }
 
 // Runs on a timer and checks if two boolean conditions are met. Draws pixmap and adds to scene if conditions are satisfied.
@@ -187,6 +196,56 @@ void MainWindow::drawPlantChecker()
     }
 
     ui->graphicsView->setReady(false); // Always turning it off so that its significance is only when clicked
+}
+
+void MainWindow::drawZombieChecker()
+{
+    if(zombieTimeCounter >= currentLevel->getStartTime())//*1000)
+    {
+        if(zombieCounter >= int(currentZombieSequence.size()))
+        {
+            //currentUser->setLevel(currentUser->getLevel()+1);
+            zombieTimer->stop();
+            return;
+        }
+
+        //zombieInterval = currentLevel->getInterval();
+
+        if(zombieTimeCounter%1000 == 0) //zombieTimeCounter - lastZombieSpawnTime >= zombieInterval) //zombieCounter < int(currentZombieSequence.size()))
+        {
+            //currentZombie = new Zombie;
+            currentZombie = zombies[currentZombieSequence[zombieCounter]-1]; //Using to hold current zombie
+            Zombie * aZombie = new Zombie; // Need to new everytime or else same current zombie is added to scene
+            //Zombie zomb = *currentZombie;
+            //aZombie = *currentZombie;
+            aZombie->setIndex(currentZombie->getIndex());
+            aZombie->setName(currentZombie->getName());
+            aZombie->setArmor(currentZombie->getArmor());
+            aZombie->setLife(currentZombie->getLife());
+            aZombie->setAttack(currentZombie->getAttack());
+            aZombie->setAttackRate(currentZombie->getAttackRate());
+            aZombie->setSpeed(currentZombie->getSpeed());
+
+            QPixmap zombie(":/pvz images/" + QString::fromStdString(currentZombie->getName()) + ".png");
+
+            zombie = zombie.scaledToWidth(lawnWidth/columns);
+            aZombie->setPixmap(zombie);
+            scene->addItem(aZombie);
+            aZombie->setPos(ui->graphicsView->width()-30,lawnTop+lawnHeight/rows+50);
+            qDebug() << aZombie->getSpeed();
+            //aZombie->setPos(500,500);
+            qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
+            //lastZombieSpawnTime = zombieTimeCounter + zombieInterval;
+            existingZombies.push_back(aZombie);
+            zombieCounter++;
+
+            //for (int i=0; i<int(existingZombies.size()); i++)
+            //{
+            //    qDebug() << "zombie:"<< i << existingZombies[i]->pos();
+            //}
+        }
+    }
+    zombieTimeCounter += 50;
 }
 
 void MainWindow::sunDropper()
@@ -324,6 +383,8 @@ void MainWindow::on_userComboBox_currentIndexChanged(int index)
         ui->startButton->setEnabled(1);
         ui->nameLineEdit->setText(QString::fromStdString(users[index-1]->getName()));
         ui->levelLineEdit->setText("Level: " + QString::number(users[index-1]->getLevel()));
+        currentUser = users[index-1];
+        //currentLevel = levels[index-1];
     }
     qDebug() << index;
 }
@@ -422,11 +483,23 @@ void MainWindow::on_startButton_clicked()
     connect(sunTimer, SIGNAL(timeout()), this, SLOT(sunDropper()));
     sunTimer->start(50);
 
+    // Set up a timer which will be responsible for drawing Zombies
+    zombieTimer = new QTimer(this);
+    connect(sunTimer, SIGNAL(timeout()), this, SLOT(drawZombieChecker()));
+    //zombieTimer->start(50);
+
     // Set up a timer that will periodically update the UI
     uiTimer = new QTimer(this);
     connect(uiTimer, SIGNAL(timeout()), this, SLOT(uiUpdater()));
     uiTimer->start(30);
 
+    // Set up a timer which will periodicallly call the advance() method on scene object
+    sceneTimer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), scene, SLOT(advance()));
+    sceneTimer->start(30);
+
+    currentLevel = levels[currentUser->getLevel()-1];
+    currentZombieSequence = currentLevel->getZombieSequence();
     // Starting sunDropTimer
     //sunDropTimer->start();
 

@@ -23,5 +23,12 @@
         <file>pvz images/chompericon.png</file>
         <file>pvz images/sun.png</file>
         <file>pvz images/sunflowericon.png</file>
+        <file>pvz files/pvz_zombies.csv</file>
+        <file>pvz images/conehead.png</file>
+        <file>pvz images/bullet.png</file>
+        <file>pvz images/regular.png</file>
+        <file>pvz images/buckethead.png</file>
+        <file>pvz images/flag.png</file>
+        <file>pvz images/newspaper.png</file>
     </qresource>
 </RCC>
