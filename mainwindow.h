@@ -14,6 +14,7 @@
 #include <QMouseEvent>
 #include <sun.h>
 #include <QElapsedTimer>
+#include "projectile.h"
 
 using std::vector;
 
@@ -42,6 +43,10 @@ private slots:
     void drawZombieChecker();
 
     void sunDropper();
+
+    void plantShooter();
+
+    //void createSun(int x, int y);
 
     void on_p1Button_clicked();
 
@@ -76,7 +81,8 @@ private:
     vector<Plant *> plants;
     vector<Zombie *> zombies;
     vector<int> currentZombieSequence;
-    vector<QPointF> existingPlants; // Using to check if plants have already been drawn. Stores already existing plant coordinates.
+    //vector<QPointF> existingPlants; // Using to check if plants have already been drawn. Stores already existing plant coordinates.
+    vector<Plant*> existingPlants;
     vector<Zombie*> existingZombies;
     Plant * currentPlant;
     User * currentUser;
@@ -91,6 +97,7 @@ private:
     QTimer * sunTimer;
     QTimer * uiTimer;
     QTimer * zombieTimer;
+    QTimer * shootingTimer;
     QElapsedTimer * sunDropTimer;
     int sunPoints;
     int sunTimeCounter;
@@ -102,6 +109,8 @@ private:
     int columns;
     vector <vector<QPointF> > grid; // grid
     vector <Sun*> suns;
+    vector <Sun*> plantSuns;
+    vector <Projectile*> projectiles;
 };
 
 #endif // MAINWINDOW_H

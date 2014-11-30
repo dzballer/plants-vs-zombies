@@ -2,11 +2,11 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 #include <QTime>
-
+#include <math.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), currentPlant(NULL), currentUser(NULL), currentLevel(NULL), currentZombie(NULL), sunPoints(0), sunTimeCounter(0), zombieCounter(0), zombieTimeCounter(0), lastZombieSpawnTime(0), zombieInterval(0), rows(5), columns(9), grid(rows, std::vector<QPointF>(columns))
+    ui(new Ui::MainWindow), currentPlant(NULL), currentUser(NULL), currentLevel(NULL), currentZombie(NULL), sunPoints(1000), sunTimeCounter(0), zombieCounter(0), zombieTimeCounter(0), lastZombieSpawnTime(0), zombieInterval(0), rows(5), columns(9), grid(rows, std::vector<QPointF>(columns))
 {
     qsrand(QTime::currentTime().msec());
 
@@ -166,7 +166,7 @@ void MainWindow::drawPlantChecker()
         for(int i = 0; i<int(existingPlants.size()); i++)
         {
             //qDebug() << itemPos << " " << existingPlants[i] << "pop";
-            if(itemPos == existingPlants[i])
+            if(itemPos == existingPlants[i]->pos())
             {
                 qDebug() << "Error: Plant already exists";
                 plantReady = 0;
@@ -174,25 +174,43 @@ void MainWindow::drawPlantChecker()
             }
         }
 
-        existingPlants.push_back(itemPos);
+        /*if (currentPlant->getSun() == 1)
+        {
+            // Set up a timer which will be responsible for dropping, deleting, and updating sunPoints
+            QTimer * plantSunTimer = new QTimer(this);
+            connect(plantSunTimer, SIGNAL(timeout()), this, SLOT(createSun(itemPos.x(),itemPos.y())));
+            plantSunTimer->start(50);
+
+        }*/
 
         //qDebug() << "Current existing plants: ";
         //for(int i=0; i<existingPlants.size(); i++)
         //    qDebug() << existingPlants[i];
 
+
         //Drawing
-        //QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
         QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
         qDebug() << ":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png";
         plant = plant.scaledToWidth(lawnWidth/9);
-        QGraphicsPixmapItem * plantItem = scene->addPixmap(plant);
+        Plant *aPlant = new Plant(currentPlant);
+        aPlant->setPixmap(plant);
+        scene->addItem(aPlant);
+        aPlant->setPos(itemPos);
+
+        existingPlants.push_back(aPlant);
+        //QGraphicsPixmapItem * plantItem = scene->addPixmap(plant);
         //plantItem->setPixmap(QPixmap::fromImage(":/pvz images/" + QString::fromStdString(currentPlant->getName() + ".png").scaled(50,50));
 
-        plantItem->setPos(itemPos);
+        //plantItem->setPos(itemPos);
         //plantItem->setPos(ui->graphicsView->getPos());
         plantReady = false;
         //qDebug() << "draw is ready";
         sunPoints -= currentPlant->getCost();
+    }
+
+    for (int i=0; i<int(existingPlants.size()); i++)
+    {
+        existingPlants[i]->setShootingTimeCounter(existingPlants[i]->getShootingTimeCounter()+50);
     }
 
     ui->graphicsView->setReady(false); // Always turning it off so that its significance is only when clicked
@@ -252,22 +270,34 @@ void MainWindow::sunDropper()
 {
     for(int i=0; i<int(suns.size()); i++)
     {
-        if(suns[i]->getDuration() >= 3000)
+        if(suns[i]->getDuration() >= 3000) // If sun's duration has exceeded its lifetime, it will be deleted
         {
             //vector<Sun*>::iterator iter;
             //for(int j=0; j<i; iter++, j++);
             delete suns[i];
             suns.erase(suns.begin()+i);
         }
-        else if(suns[i]->getDeleteReady())
+        else if(suns[i]->getDeleteReady()) // Otherwise, if the sun is clicked, it will also be deleted
         {
             sunPoints += 25;
             delete suns[i];
             suns.erase(suns.begin()+i);
             qDebug() << "deleted";
-        }
-    }
 
+        }
+
+        /*if(plantSuns[i]->getDuration()>= 10000)
+        {
+            delete plantSuns[i];
+            plantSuns.erase(plantSuns.begin()+i);
+        }
+        else if(plantSuns[i]->getDeleteReady())
+        {
+            sunPoints += 50;
+            delete plantSuns[i];
+            plantSuns.erase(plantSuns.begin()+i);
+        }*/
+    }
     /*for(int i=0; i<int(suns.size()); i++)
         {
             if(suns[i]->getSunTime() >= 200000)
@@ -284,6 +314,122 @@ void MainWindow::sunDropper()
                 qDebug() << "deleted";
             }
         }*/
+
+    // Checking which plants are suns
+    /*for(int i=0; i<int(existingPlants.size()); i++)
+    {
+        if (existingPlants[i]->getSun() == 1 && sunTimeCounter%5000 == 0)
+        {
+            Sun *sun = new Sun;
+            QPixmap sunPixmap(":/pvz images/sun.png");
+            sunPixmap = sunPixmap.scaledToWidth(lawnWidth/columns);
+            sun->setPixmap(sunPixmap);
+            scene->addItem(sun);
+            sun->setPos(existingPlants[i]->pos());
+            plantSuns.push_back(sun);
+        }
+    }*/
+
+    if(sunTimeCounter%3000 == 0 && sunTimeCounter != 0)
+    {
+        Sun *sun = new Sun;
+        QPixmap sunPixmap(":/pvz images/sun.png");
+        sunPixmap = sunPixmap.scaledToWidth(lawnWidth/columns);
+        sun->setPixmap(sunPixmap);
+        scene->addItem(sun);
+
+        // Randomizing a grid coordinate for the sundrop
+        int randRow = qrand()%(rows); // /(double(RAND_MAX)+1);
+        int randColumn = qrand()%(columns);
+
+        QPointF randPoint = grid[randRow][randColumn];
+        sun->setFinalPos(randPoint);
+        sun->setPos(randPoint.x(), 0); // Drops from sky in a vertical fashion
+
+        //sun->advance(10);
+        //sun->setPos(itemPos);
+        suns.push_back(sun);
+    }
+    sunTimeCounter += 50;
+    for(int i=0; i<int(suns.size()); i++)
+    {
+        suns[i]->setDuration(suns[i]->getDuration()+50);
+        //plantSuns[i]->setDuration(plantSuns[i]->getDuration()+50);
+    }
+}
+
+void MainWindow::plantShooter()
+{
+    //plants[1]->setFireRate(2);
+    for(int i=0; i<int(existingPlants.size()); i++)
+    {
+        if(fmod((existingPlants[i]->getShootingTimeCounter()),(1000*existingPlants[i]->getFireRate())) == 0 )
+        {
+            switch (existingPlants[i]->getIndex())
+            {
+            default:
+                qDebug() << "existingPlant error";
+            case 1:
+            {
+                Projectile *projectile = new Projectile;
+                QPixmap projectilePixmap(":/pvz images/peashooterprojectile.png");
+                //projectilePixmap = projectilePixmap.scaledToWidth(10);
+                projectile->setPixmap(projectilePixmap);
+                scene->addItem(projectile);
+                projectile->setPos(existingPlants[i]->pos());
+
+                projectiles.push_back(projectile);
+                qDebug()<<QString::fromStdString(existingPlants[i]->getName()) << "shoots";
+                break;
+            }
+            case 2:
+            {
+                Sun *sun = new Sun;
+                QPixmap sunPixmap(":/pvz images/sun.png");
+                sunPixmap = sunPixmap.scaledToWidth(lawnWidth/columns);
+                sun->setPixmap(sunPixmap);
+                scene->addItem(sun);
+                sun->setPos(existingPlants[i]->pos());
+
+                plantSuns.push_back(sun);
+                qDebug()<<QString::fromStdString(existingPlants[i]->getName()) << "shoots";
+                break;
+            }
+            /*case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:*/
+
+            }
+        }
+    }
+}
+
+/*void MainWindow::createSun(int x, int y)
+{
+    Sun *aSun = new Sun;
+
+    aSun->setPos(x,y);
+
+    for(int i=0; i<int(suns.size()); i++)
+    {
+        if(suns[i]->getDuration() >= 3000)
+        {
+            //vector<Sun*>::iterator iter;
+            //for(int j=0; j<i; iter++, j++);
+            delete suns[i];
+            suns.erase(suns.begin()+i);
+        }
+        else if(suns[i]->getDeleteReady())
+        {
+            sunPoints += 25;
+            delete suns[i];
+            suns.erase(suns.begin()+i);
+            qDebug() << "deleted";
+        }
+    }
 
     if(sunTimeCounter%3000 == 0 && sunTimeCounter != 0)
     {
@@ -309,7 +455,7 @@ void MainWindow::sunDropper()
     {
         suns[i]->setDuration(suns[i]->getDuration()+50);
     }
-}
+}*/
 
 void MainWindow::on_p1Button_clicked()
 {
@@ -476,7 +622,7 @@ void MainWindow::on_startButton_clicked()
     // Set up a timer which will periodicallly call the advance() method on scene object
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(drawPlantChecker()));
-    timer->start(30);
+    timer->start(50);
 
     // Set up a timer which will be responsible for dropping, deleting, and updating sunPoints
     sunTimer = new QTimer(this);
@@ -485,30 +631,26 @@ void MainWindow::on_startButton_clicked()
 
     // Set up a timer which will be responsible for drawing Zombies
     zombieTimer = new QTimer(this);
-    connect(sunTimer, SIGNAL(timeout()), this, SLOT(drawZombieChecker()));
-    //zombieTimer->start(50);
+    connect(zombieTimer, SIGNAL(timeout()), this, SLOT(drawZombieChecker()));
+    zombieTimer->start(50); // **why is it if I leave this timer off it my function still works?
 
     // Set up a timer that will periodically update the UI
     uiTimer = new QTimer(this);
     connect(uiTimer, SIGNAL(timeout()), this, SLOT(uiUpdater()));
-    uiTimer->start(30);
+    uiTimer->start(50);
 
     // Set up a timer which will periodicallly call the advance() method on scene object
     sceneTimer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), scene, SLOT(advance()));
-    sceneTimer->start(30);
+    connect(sceneTimer, SIGNAL(timeout()), scene, SLOT(advance()));
+    sceneTimer->start(50);
 
+    // Set up a timer which will periodically "seed" the plants based on each plants fireRate
+    shootingTimer = new QTimer(this);
+    connect(shootingTimer, SIGNAL(timeout()), this, SLOT(plantShooter()));
+    shootingTimer->start(50);
+
+    // Setting currentLevel and curentZombieSequence depending on the selected user when start was clicked
     currentLevel = levels[currentUser->getLevel()-1];
     currentZombieSequence = currentLevel->getZombieSequence();
-    // Starting sunDropTimer
-    //sunDropTimer->start();
 
-    //timer->
-
-    /*Sun *sun = new Sun;
-    QPixmap sunPixmap(":/pvz images/sun.png");
-    sunPixmap = sunPixmap.scaledToWidth(lawnWidth/9);
-    sun->setPixmap(sunPixmap);
-    scene->addItem(sun);
-    sun->setPos(grid[1][1]);*/
 }

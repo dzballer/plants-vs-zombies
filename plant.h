@@ -7,7 +7,7 @@
 
 using std::string;
 
-class Plant : QGraphicsPixmapItem
+class Plant : public QGraphicsPixmapItem
 {
 private:
     int index;
@@ -24,8 +24,10 @@ private:
     int sun;
     int need;
     QImage * mImage;
+    int shootingTimeCounter;
 public:
     Plant();
+    Plant(Plant * plant);
     void setIndex(int an_index);
     void setName(string a_name);
     void setCost(int num_cost);
@@ -39,6 +41,7 @@ public:
     void setSeeding(int seeding_time);
     void setSun(int num_sun);
     void setNeed(int num_need);
+    int getIndex();
     string getName();
     int getCost();
     int getLife();
@@ -51,6 +54,8 @@ public:
     double getSeeding();
     int getSun();
     int getNeed();
+    int getShootingTimeCounter() const;
+    void setShootingTimeCounter(int value);
 };
 
 #endif // PLANT_H

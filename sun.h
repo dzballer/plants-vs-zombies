@@ -11,9 +11,12 @@ class Sun : public QGraphicsPixmapItem
 {
 private:
     double yVelocity; // xVelocity should always be 0 so no need in making a member
-    int duration; //
+    int duration;
     bool deleteReady;
+    QPointF initPos;
+    QPointF finalPos;
     //QElapsedTimer * sunTimer;
+
 public:
     Sun();
     void advance(int phase);
@@ -26,6 +29,10 @@ public:
     void setDeleteReady(bool value);
     //int getSunTime();
     //~Sun();
+    QPointF getInitPos() const;
+    void setInitPos(const QPointF &value);
+    QPointF getFinalPos() const;
+    void setFinalPos(const QPointF &value);
 };
 
 #endif // SUN_H

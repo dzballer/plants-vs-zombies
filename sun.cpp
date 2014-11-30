@@ -15,9 +15,8 @@ void Sun::setDuration(int value)
 void Sun::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsPixmapItem::mousePressEvent(event);
-    deleteReady =true;
+    deleteReady = true;
     qDebug() << "clicked";
-
 }
 
 bool Sun::getDeleteReady() const
@@ -39,6 +38,26 @@ Sun::~Sun()
 {
     delete sunTimer;
 }*/
+
+QPointF Sun::getInitPos() const
+{
+    return initPos;
+}
+
+void Sun::setInitPos(const QPointF &value)
+{
+    initPos = value;
+}
+
+QPointF Sun::getFinalPos() const
+{
+    return finalPos;
+}
+
+void Sun::setFinalPos(const QPointF &value)
+{
+    finalPos = value;
+}
 Sun::Sun() : yVelocity(10), duration(0), deleteReady(false)//, sunTimer(new QElapsedTimer)
 {
     //sunTimer->start();
@@ -50,8 +69,9 @@ void Sun::advance(int phase)
     // advance() method is called twice. Once with phase set to 0 indicating the object is about to advence
     // Second time with phase set to 1 for the actual advance.
     if(!phase) return;  // We don't do anything to prepare objects for advancing
-
+    if(this->pos().y() >= finalPos.y()) return; // When sunpoint drops from sky onto square, it will stop moving.
     //this->setos().setY(this->pos().y() + yVelocity);
+
     this->setPos(this->pos().x(), this->pos().y()+yVelocity);
 }
 

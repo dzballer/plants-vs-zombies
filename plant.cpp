@@ -1,7 +1,35 @@
 #include "plant.h"
 
-Plant::Plant()
+
+int Plant::getShootingTimeCounter() const
 {
+    return shootingTimeCounter;
+}
+
+void Plant::setShootingTimeCounter(int value)
+{
+    shootingTimeCounter = value;
+}
+
+Plant::Plant() : shootingTimeCounter(0)
+{
+}
+
+Plant::Plant(Plant *plant) : shootingTimeCounter(0)
+{
+    this->index = (plant->getIndex());
+    this->name=(plant->getName());
+    this->cost=(plant->getCost());
+    this->life=(plant->getLife());
+    this->range=(plant->getRange());
+    this->damage=(plant->getDamage());
+    this->fireRate=(plant->getFireRate());
+    this->splash=(plant->getSplash());
+    this->slow=(plant->getSlow());
+    this->bomb=(plant->getBomb());
+    this->seeding=(plant->getSeeding());
+    this->sun=(plant->getSun());
+    this->need=(plant->getNeed());
 }
 
 void Plant::setIndex(int an_index)
@@ -67,6 +95,11 @@ void Plant::setSun(int num_sun)
 void Plant::setNeed(int num_need)
 {
     need = num_need;
+}
+
+int Plant::getIndex()
+{
+    return index;
 }
 
 string Plant::getName()

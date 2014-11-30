@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     lawn.cpp \
     plant.cpp \
     zombie.cpp \
-    sun.cpp
+    sun.cpp \
+    projectile.cpp
 
 HEADERS  += mainwindow.h \
     ../user.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     lawn.h \
     plant.h \
     zombie.h \
-    sun.h
+    sun.h \
+    projectile.h
 
 FORMS    += mainwindow.ui
 
