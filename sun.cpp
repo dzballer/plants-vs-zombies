@@ -1,5 +1,6 @@
 #include "sun.h"
 #include "mainwindow.h"
+#include "lawn.h"
 
 
 int Sun::getDuration() const
@@ -14,6 +15,7 @@ void Sun::setDuration(int value)
 
 void Sun::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    //QGraphicsView::mousePressEvent(event);
     QGraphicsPixmapItem::mousePressEvent(event);
     deleteReady = true;
     qDebug() << "clicked";

@@ -1,25 +1,26 @@
-#include "projectile.h"
+#include "lawnmower.h"
 
 
-bool Projectile::getSlow() const
+bool Lawnmower::getReady() const
 {
-    return slow;
+    return ready;
 }
 
-void Projectile::setSlow(bool value)
+void Lawnmower::setReady(bool value)
 {
-    slow = value;
+    ready = value;
 }
-Projectile::Projectile() : speed(5), slow(false)
+Lawnmower::Lawnmower() : speed(10), ready(false)
 {
 }
 
-void Projectile::advance(int phase)
+void Lawnmower::advance(int phase)
 {
     // advance() method is called twice. Once with phase set to 0 indicating the object is about to advence
     // Second time with phase set to 1 for the actual advance.
     if(!phase) return;  // We don't do anything to prepare objects for advancing
 
+    if(!ready) return;
     //this->setos().setY(this->pos().y() + yVelocity);
     this->setPos(this->pos().x() + speed, this->pos().y());
 }

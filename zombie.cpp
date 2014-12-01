@@ -81,7 +81,7 @@ void Zombie::advance(int phase)
     if(!alive)
     {
         this->setPos(2000,this->pos().y());
-        lifeLabel->setPos(2000,lifeLabel->pos().y());
+        //lifeLabel->setPos(2000,lifeLabel->pos().y());
         return;
     }
 
@@ -170,7 +170,17 @@ void Zombie::setLifeLabel(QGraphicsTextItem *value)
 {
     lifeLabel = value;
 }
-Zombie::Zombie() : collide(false), timerStarted(false), alive(true)
+
+bool Zombie::getSlowed() const
+{
+    return slowed;
+}
+
+void Zombie::setSlowed(bool value)
+{
+    slowed = value;
+}
+Zombie::Zombie() : collide(false), timerStarted(false), alive(true), slowed(false)
 {
 
 }
@@ -186,5 +196,4 @@ Zombie::Zombie(Zombie *zombie) : collide(false), timerStarted(false), alive(true
     this->setSpeed(zombie->getSpeed());
 
     //lifeLabel->setPos(this->pos().x()+20,this->pos().y()-10);
-
 }

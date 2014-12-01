@@ -57,11 +57,21 @@ void Plant::setLifeLabel(QGraphicsTextItem *value)
 {
     lifeLabel = value;
 }
+
+bool Plant::getChompReady() const
+{
+    return chompReady;
+}
+
+void Plant::setChompReady(bool value)
+{
+    chompReady = value;
+}
 Plant::Plant() : shootingTimeCounter(0), alive(true), lifeLabel(new QGraphicsTextItem)
 {
 }
 
-Plant::Plant(Plant *plant) : shootingTimeCounter(0), alive(true), lifeLabel(new QGraphicsTextItem)
+Plant::Plant(Plant *plant) : shootingTimeCounter(0), alive(true), chompReady(false), lifeLabel(new QGraphicsTextItem)
 {
     this->index = (plant->getIndex());
     this->name=(plant->getName());

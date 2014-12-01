@@ -32,6 +32,7 @@ private:
     int shootingTimeCounter;
     bool alive;
     bool collide;
+    bool chompReady;
     vector <Zombie *> collideZombies; // Zombies that plant is currently colliding with
     QGraphicsTextItem * lifeLabel;
 public:
@@ -74,6 +75,8 @@ public:
     void setCollide(bool value);
     QGraphicsTextItem *getLifeLabel() const;
     void setLifeLabel(QGraphicsTextItem *value);
+    bool getChompReady() const;
+    void setChompReady(bool value);
 };
 
 #endif // PLANT_H

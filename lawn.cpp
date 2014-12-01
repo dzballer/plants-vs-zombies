@@ -21,6 +21,8 @@ void Lawn::mousePressEvent(QMouseEvent *e)
     pos = e->pos();
     qDebug() << e->pos();
     ready = true;
+    qDebug() << ready;
+    //QGraphicsView::mousePressEvent(e);
 }
 
 QPoint Lawn::getPos()

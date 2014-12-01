@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     plant.cpp \
     zombie.cpp \
     sun.cpp \
-    projectile.cpp
+    projectile.cpp \
+    lawnmower.cpp
 
 HEADERS  += mainwindow.h \
     ../user.h \
@@ -32,7 +33,8 @@ HEADERS  += mainwindow.h \
     plant.h \
     zombie.h \
     sun.h \
-    projectile.h
+    projectile.h \
+    lawnmower.h
 
 FORMS    += mainwindow.ui
 

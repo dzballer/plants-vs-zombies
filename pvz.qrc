@@ -36,5 +36,7 @@
         <file>pvz files/pvz_players.csv</file>
         <file>pvz images/level2lawn.jpg</file>
         <file>pvz images/level1lawn.jpg</file>
+        <file>pvz images/lawnmower.png</file>
+        <file>pvz images/powie.png</file>
     </qresource>
 </RCC>

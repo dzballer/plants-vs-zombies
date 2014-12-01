@@ -15,6 +15,7 @@
 #include <sun.h>
 #include <QElapsedTimer>
 #include "projectile.h"
+#include "lawnmower.h"
 
 using std::vector;
 
@@ -52,6 +53,8 @@ private slots:
     void plantItemChecker();
 
     void projectileChecker();
+
+    void gameEndChecker();
 
     //void plantSunsChecker();
 
@@ -112,6 +115,7 @@ private:
     QTimer * shootingTimer;
     QTimer * plantItemTimer;
     QTimer * projectileTimer;
+    QTimer * gameEndTimer;
     QElapsedTimer * sunDropTimer;
     int sunPoints;
     int sunTimeCounter;
@@ -126,6 +130,7 @@ private:
     vector <Sun*> plantSuns;
     vector <Projectile*> projectiles;
     vector <int> zombieCollisionCounters;
+    vector <Lawnmower*> lawnmowers;
 };
 
 #endif // MAINWINDOW_H
