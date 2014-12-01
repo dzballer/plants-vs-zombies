@@ -4,8 +4,13 @@
 #include <string>
 #include <QImage>
 #include <QGraphicsPixmapItem>
+#include <vector>
+#include <zombie.h>
+#include <QProgressBar>
 
 using std::string;
+
+using std::vector;
 
 class Plant : public QGraphicsPixmapItem
 {
@@ -13,7 +18,7 @@ private:
     int index;
     string name;
     int cost;
-    int life;
+    double life;
     int range;
     int damage;
     double fireRate;
@@ -25,13 +30,17 @@ private:
     int need;
     QImage * mImage;
     int shootingTimeCounter;
+    bool alive;
+    bool collide;
+    vector <Zombie *> collideZombies; // Zombies that plant is currently colliding with
+    QGraphicsTextItem * lifeLabel;
 public:
     Plant();
     Plant(Plant * plant);
     void setIndex(int an_index);
     void setName(string a_name);
     void setCost(int num_cost);
-    void setLife(int num_life);
+    void setLife(double num_life);
     void setRange(int num_range);
     void setDamage(int num_damage);
     void setFireRate(int fire_rate);
@@ -44,7 +53,7 @@ public:
     int getIndex();
     string getName();
     int getCost();
-    int getLife();
+    double getLife();
     int getRange();
     int getDamage();
     double getFireRate();
@@ -56,6 +65,17 @@ public:
     int getNeed();
     int getShootingTimeCounter() const;
     void setShootingTimeCounter(int value);
+    bool getAlive() const;
+    void setAlive(bool value);
+    vector<Zombie *> getCollideZombies() const;
+    void setCollideZombies(const vector<Zombie *> &value);
+    void addCollideZombie(Zombie * zombie);
+    bool getCollide() const;
+    void setCollide(bool value);
+    QProgressBar *getHpBar() const;
+    void setHpBar(QProgressBar *value);
+    QGraphicsTextItem *getLifeLabel() const;
+    void setLifeLabel(QGraphicsTextItem *value);
 };
 
 #endif // PLANT_H

@@ -51,6 +51,8 @@ private slots:
 
     void plantItemChecker();
 
+    void projectileChecker();
+
     //void createSun(int x, int y);
 
     void on_p1Button_clicked();
@@ -107,6 +109,7 @@ private:
     QTimer * zombieTimer;
     QTimer * shootingTimer;
     QTimer * plantItemTimer;
+    QTimer * projectileTimer;
     QElapsedTimer * sunDropTimer;
     int sunPoints;
     int sunTimeCounter;

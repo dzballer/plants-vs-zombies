@@ -11,11 +11,57 @@ void Plant::setShootingTimeCounter(int value)
     shootingTimeCounter = value;
 }
 
-Plant::Plant() : shootingTimeCounter(0)
+bool Plant::getAlive() const
+{
+    return alive;
+}
+
+void Plant::setAlive(bool value)
+{
+    alive = value;
+}
+
+vector<Zombie *> Plant::getCollideZombies() const
+{
+    return collideZombies;
+}
+
+void Plant::setCollideZombies(const vector<Zombie *> &value)
+{
+    collideZombies = value;
+}
+
+void Plant::addCollideZombie(Zombie *zombie)
+{
+    collideZombies.push_back(zombie);
+}
+
+
+bool Plant::getCollide() const
+{
+    return collide;
+}
+
+void Plant::setCollide(bool value)
+{
+    collide = value;
+}
+
+
+QGraphicsTextItem *Plant::getLifeLabel() const
+{
+    return lifeLabel;
+}
+
+void Plant::setLifeLabel(QGraphicsTextItem *value)
+{
+    lifeLabel = value;
+}
+Plant::Plant() : shootingTimeCounter(0), alive(true), lifeLabel(new QGraphicsTextItem)
 {
 }
 
-Plant::Plant(Plant *plant) : shootingTimeCounter(0)
+Plant::Plant(Plant *plant) : shootingTimeCounter(0), alive(true), lifeLabel(new QGraphicsTextItem)
 {
     this->index = (plant->getIndex());
     this->name=(plant->getName());
@@ -30,6 +76,7 @@ Plant::Plant(Plant *plant) : shootingTimeCounter(0)
     this->seeding=(plant->getSeeding());
     this->sun=(plant->getSun());
     this->need=(plant->getNeed());
+
 }
 
 void Plant::setIndex(int an_index)
@@ -47,7 +94,7 @@ void Plant::setCost(int num_cost)
     cost = num_cost;
 }
 
-void Plant::setLife(int num_life)
+void Plant::setLife(double num_life)
 {
     life = num_life;
 }
@@ -112,7 +159,7 @@ int Plant::getCost()
     return cost;
 }
 
-int Plant::getLife()
+double Plant::getLife()
 {
     return life;
 }

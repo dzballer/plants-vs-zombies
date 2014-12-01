@@ -19,7 +19,8 @@ private:
     bool collide;
     bool timerStarted;
     QElapsedTimer * collisionTimer;
-
+    bool alive;
+    QGraphicsTextItem * lifeLabel;
 public:
     Zombie();
     Zombie(Zombie *zombie);
@@ -47,6 +48,8 @@ public:
     int getCollisionTime();
     bool isTimerStarted() const;
     void setTimerStarted(bool value);
+    bool getAlive() const;
+    void setAlive(bool value);
 };
 
 #endif // ZOMBIE_H

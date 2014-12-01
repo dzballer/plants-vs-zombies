@@ -76,12 +76,17 @@ void Zombie::advance(int phase)
     // advance() method is called twice. Once with phase set to 0 indicating the object is about to advence
     // Second time with phase set to 1 for the actual advance.
     if(!phase) return;  // We don't do anything to prepare objects for advancing
+
+    // If zombie is dead, take it out of screen
+    if(!alive)
+    {
+        this->setPos(2000,this->pos().y());
+        return;
+    }
+
     if(collide) return; // If zombie is colliding with "*other", then zombie doesn't move.
     this->setPos(this->pos().x()-speed,this->pos().y());
-    //this->pos().setX(this->pos().x() - speed);
-    //qDebug() << this->pos().x()-speed;
-    //this->setPos();
-    //qDebug() << "advancing";
+
 }
 
 /*bool Zombie::collidesWithItem(const QGraphicsItem *other) const
@@ -143,12 +148,22 @@ void Zombie::setTimerStarted(bool value)
 {
     timerStarted = value;
 }
-Zombie::Zombie() : collide(false), timerStarted(false)
+
+bool Zombie::getAlive() const
+{
+    return alive;
+}
+
+void Zombie::setAlive(bool value)
+{
+    alive = value;
+}
+Zombie::Zombie() : collide(false), timerStarted(false), alive(true)
 {
 
 }
 
-Zombie::Zombie(Zombie *zombie) : collide(false), timerStarted(false)
+Zombie::Zombie(Zombie *zombie) : collide(false), timerStarted(false), alive(true)
 {
     this->setIndex(zombie->getIndex());
     this->setName(zombie->getName());
