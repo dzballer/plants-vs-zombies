@@ -17,6 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // Creating gameManager that loads/reads files and data
     gameManager = new GameManager(); // need to delete
 
+    // Setting buttons to checkable
+    setButtonsCheckable(1);
+
     // Setting ui labels and button usability
     ui->sunpointsLabel->setText(QString::number(sunPoints));
     ui->p1Button->setEnabled(0);
@@ -105,6 +108,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
 {
     e->ignore(); // Using the parameter (might be useless lol)
     plantReady = false; // If user clicks anywhere outside of graphicsview, the plantReady will be terminated
+    setButtonsCheck(0);
 }
 
 void MainWindow::sortComboBox()
@@ -123,6 +127,30 @@ void MainWindow::sortComboBox()
         }
     }
     temp = NULL;
+}
+
+void MainWindow::setButtonsCheckable(bool checkable)
+{
+    ui->p1Button->setCheckable(checkable);
+    ui->p2Button->setCheckable(checkable);
+    ui->p3Button->setCheckable(checkable);
+    ui->p4Button->setCheckable(checkable);
+    ui->p5Button->setCheckable(checkable);
+    ui->p6Button->setCheckable(checkable);
+    ui->p7Button->setCheckable(checkable);
+    ui->p8Button->setCheckable(checkable);
+}
+
+void MainWindow::setButtonsCheck(bool check)
+{
+    ui->p1Button->setChecked(check);
+    ui->p2Button->setChecked(check);
+    ui->p3Button->setChecked(check);
+    ui->p4Button->setChecked(check);
+    ui->p5Button->setChecked(check);
+    ui->p6Button->setChecked(check);
+    ui->p7Button->setChecked(check);
+    ui->p8Button->setChecked(check);
 }
 
 void MainWindow::uiUpdater()
@@ -153,6 +181,7 @@ void MainWindow::drawPlantChecker()
         {
             qDebug() << "Not enough sunpoints.";
             plantReady = 0;
+            setButtonsCheck(0);
             return;
         }
 
@@ -176,8 +205,9 @@ void MainWindow::drawPlantChecker()
             {
                 if(itemPos.y() != grid[2][i].y()) // Checking middle row
                 {
-                    qDebug() << "Cannot plant on mud.";
+                    qDebug() << "Must plant on grass";
                     plantReady = 0;
+                    setButtonsCheck(0);
                     return;
                 }
             }
@@ -190,21 +220,24 @@ void MainWindow::drawPlantChecker()
                 {
                     if(itemPos.y() != grid[1+i][j].y()) // Checking rows 2-4
                     {
-                        qDebug() << "Cannot plant on mud.";
+                        qDebug() << "Must plant on grass.";
                         plantReady = 0;
+                        setButtonsCheck(0);
                         return;
                     }
                 }
             }
         }
+
         // Checking if plant already exists in spot
         for(int i = 0; i<int(existingPlants.size()); i++)
         {
             //qDebug() << itemPos << " " << existingPlants[i] << "pop";
             if(itemPos == existingPlants[i]->pos())
             {
-                qDebug() << "Error: Plant already exists";
+                qDebug() << "Must plant on empty square.";
                 plantReady = 0;
+                setButtonsCheck(0);
                 return;
             }
         }
@@ -233,13 +266,10 @@ void MainWindow::drawPlantChecker()
         aPlant->setPos(itemPos);
 
         existingPlants.push_back(aPlant);
-        //QGraphicsPixmapItem * plantItem = scene->addPixmap(plant);
-        //plantItem->setPixmap(QPixmap::fromImage(":/pvz images/" + QString::fromStdString(currentPlant->getName() + ".png").scaled(50,50));
 
-        //plantItem->setPos(itemPos);
-        //plantItem->setPos(ui->graphicsView->getPos());
         plantReady = false;
-        //qDebug() << "draw is ready";
+        setButtonsCheck(0);
+
         sunPoints -= currentPlant->getCost();
     }
 
@@ -636,57 +666,148 @@ void MainWindow::plantItemChecker()
 void MainWindow::on_p1Button_clicked()
 {
     currentPlant = plants[0]; // Sets current plant pointer to selected plant in the plants vector
-    std::cout << plants[0]->getName() << " selected\n";
     plantReady = true;
+
+    // If button has been pressed once, will disable plantReady.
+    //Opposite because click signal will set checked and this will read the opposite of what clicked just set (which is the previous state
+    if(!ui->p1Button->isChecked())
+    {
+        plantReady = false;
+        setButtonsCheck(0); // Disables other buttons
+        ui->p1Button->setChecked(0);
+    }
+    else // If button has not yet been pressed
+    {
+        setButtonsCheck(0); // Disable other buttons
+        ui->p1Button->setChecked(1); // Checks this one
+    }
+
 }
 
 void MainWindow::on_p2Button_clicked()
 {
     currentPlant = plants[1];
-    std::cout << plants[1]->getName() << " selected\n";
     plantReady = true;
+
+    if(!ui->p2Button->isChecked())
+    {
+        plantReady = false;
+        setButtonsCheck(0); // Disables other buttons
+        ui->p2Button->setChecked(0);
+    }
+    else // If button has not yet been pressed
+    {
+        setButtonsCheck(0); // Disable other buttons
+        ui->p2Button->setChecked(1); // Checks this one
+    }
 }
 
 void MainWindow::on_p3Button_clicked()
 {
     currentPlant = plants[2];
-    std::cout << plants[2]->getName() << " selected\n";
     plantReady = true;
+
+    if(!ui->p3Button->isChecked())
+    {
+        plantReady = false;
+        setButtonsCheck(0); // Disables other buttons
+        ui->p3Button->setChecked(0);
+    }
+    else // If button has not yet been pressed
+    {
+        setButtonsCheck(0); // Disable other buttons
+        ui->p3Button->setChecked(1); // Checks this one
+    }
 }
 
 void MainWindow::on_p4Button_clicked()
 {
     currentPlant = plants[3];
-    std::cout << plants[3]->getName() << " selected\n";
     plantReady = true;
+
+    if(!ui->p4Button->isChecked())
+    {
+        plantReady = false;
+        setButtonsCheck(0); // Disables other buttons
+        ui->p4Button->setChecked(0);
+    }
+    else // If button has not yet been pressed
+    {
+        setButtonsCheck(0); // Disable other buttons
+        ui->p4Button->setChecked(1); // Checks this one
+    }
 }
 
 void MainWindow::on_p5Button_clicked()
 {
     currentPlant = plants[4];
-    std::cout << plants[4]->getName() << " selected\n";
     plantReady = true;
+
+    if(!ui->p5Button->isChecked())
+    {
+        plantReady = false;
+        setButtonsCheck(0); // Disables other buttons
+        ui->p5Button->setChecked(0);
+    }
+    else // If button has not yet been pressed
+    {
+        setButtonsCheck(0); // Disable other buttons
+        ui->p5Button->setChecked(1); // Checks this one
+    }
 }
 
 void MainWindow::on_p6Button_clicked()
 {
     currentPlant = plants[5];
-    std::cout << plants[5]->getName() << " selected\n";
     plantReady = true;
+
+    if(!ui->p6Button->isChecked())
+    {
+        plantReady = false;
+        setButtonsCheck(0); // Disables other buttons
+        ui->p6Button->setChecked(0);
+    }
+    else // If button has not yet been pressed
+    {
+        setButtonsCheck(0); // Disable other buttons
+        ui->p6Button->setChecked(1); // Checks this one
+    }
 }
 
 void MainWindow::on_p7Button_clicked()
 {
     currentPlant = plants[6];
-    std::cout << plants[6]->getName() << " selected\n";
     plantReady = true;
+
+    if(!ui->p7Button->isChecked())
+    {
+        plantReady = false;
+        setButtonsCheck(0); // Disables other buttons
+        ui->p7Button->setChecked(0);
+    }
+    else // If button has not yet been pressed
+    {
+        setButtonsCheck(0); // Disable other buttons
+        ui->p7Button->setChecked(1); // Checks this one
+    }
 }
 
 void MainWindow::on_p8Button_clicked()
 {
     currentPlant = plants[7];
-    std::cout << plants[7]->getName() << " selected\n";
     plantReady = true;
+
+    if(!ui->p8Button->isChecked())
+    {
+        plantReady = false;
+        setButtonsCheck(0); // Disables other buttons
+        ui->p8Button->setChecked(0);
+    }
+    else // If button has not yet been pressed
+    {
+        setButtonsCheck(0); // Disable other buttons
+        ui->p8Button->setChecked(1); // Checks this one
+    }
 }
 
 void MainWindow::on_userComboBox_currentIndexChanged(int index)
@@ -803,7 +924,7 @@ void MainWindow::on_startButton_clicked()
     ui->nameLineEdit->setReadOnly(1);
 
     // Setting currentLevel and curentZombieSequence depending on the selected user when start was clicked
-    currentLevel = levels[1];//levels[currentUser->getLevel()-1];
+    currentLevel = levels[currentUser->getLevel()-1];
     currentZombieSequence = currentLevel->getZombieSequence();
 
     // Depending on user's current level, the playable grid and lawn will be different

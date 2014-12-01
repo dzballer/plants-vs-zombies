@@ -143,6 +143,9 @@
       <height>80</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plant: Pea Shooter | Cost: 100&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
      <string/>
     </property>
@@ -155,6 +158,9 @@
       <width>130</width>
       <height>80</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plant: SunFlower | Cost: 50&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string/>
@@ -169,6 +175,9 @@
       <height>80</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plant: Snow Pea | Cost: 175&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
      <string/>
     </property>
@@ -181,6 +190,9 @@
       <width>130</width>
       <height>80</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plant: Potato Mine | Cost: 25&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string/>
@@ -195,6 +207,9 @@
       <height>80</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plant: Snowpea | Cost: 175&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
      <string/>
     </property>
@@ -207,6 +222,9 @@
       <width>130</width>
       <height>80</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plant: Cherry Bomb | Cost: 150&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string/>
@@ -221,6 +239,9 @@
       <height>80</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plant: Wallnut | Cost: 50&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
      <string/>
     </property>
@@ -233,6 +254,9 @@
       <width>130</width>
       <height>80</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plant: Repeater | Cost: 200&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string/>
@@ -252,6 +276,110 @@
       <string>New Item</string>
      </property>
     </item>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_1">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>10</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_2">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>10</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_3">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>10</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_4">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>10</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_5">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>10</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_6">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>10</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_7">
+    <property name="geometry">
+     <rect>
+      <x>870</x>
+      <y>10</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_8">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>10</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

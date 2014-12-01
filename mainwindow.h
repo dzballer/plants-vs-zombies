@@ -35,6 +35,8 @@ public:
 
     void mousePressEvent(QMouseEvent * e);
     void sortComboBox();
+    void setButtonsCheckable(bool checkable); // made wrong function but still used it
+    void setButtonsCheck(bool check);
 
 private slots:
     void uiUpdater();
