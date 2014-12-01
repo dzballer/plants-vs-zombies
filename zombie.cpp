@@ -81,21 +81,23 @@ void Zombie::advance(int phase)
     if(!alive)
     {
         this->setPos(2000,this->pos().y());
+        lifeLabel->setPos(2000,lifeLabel->pos().y());
         return;
     }
 
     if(collide) return; // If zombie is colliding with "*other", then zombie doesn't move.
-    this->setPos(this->pos().x()-speed,this->pos().y());
 
+    this->setPos(this->pos().x()-speed,this->pos().y());
+    //this->lifeLabel->setPos(this->pos().x()+20,this->pos().y()-10); // why crashing??
 }
 
 /*bool Zombie::collidesWithItem(const QGraphicsItem *other) const
 {
     collide = true;
     return true;
-}/*
+}
 
-/*bool Zombie::isCollidingWith(QGraphicsItem *other)
+bool Zombie::isCollidingWith(QGraphicsItem *other)
 {
     if(this->collidesWithItem(other))
     {
@@ -158,6 +160,16 @@ void Zombie::setAlive(bool value)
 {
     alive = value;
 }
+
+QGraphicsTextItem *Zombie::getLifeLabel() const
+{
+    return lifeLabel;
+}
+
+void Zombie::setLifeLabel(QGraphicsTextItem *value)
+{
+    lifeLabel = value;
+}
 Zombie::Zombie() : collide(false), timerStarted(false), alive(true)
 {
 
@@ -172,4 +184,7 @@ Zombie::Zombie(Zombie *zombie) : collide(false), timerStarted(false), alive(true
     this->setAttack(zombie->getAttack());
     this->setAttackRate(zombie->getAttackRate());
     this->setSpeed(zombie->getSpeed());
+
+    //lifeLabel->setPos(this->pos().x()+20,this->pos().y()-10);
+
 }

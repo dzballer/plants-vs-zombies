@@ -53,6 +53,8 @@ private slots:
 
     void projectileChecker();
 
+    //void plantSunsChecker();
+
     //void createSun(int x, int y);
 
     void on_p1Button_clicked();

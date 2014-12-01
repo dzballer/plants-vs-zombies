@@ -50,6 +50,8 @@ public:
     void setTimerStarted(bool value);
     bool getAlive() const;
     void setAlive(bool value);
+    QGraphicsTextItem *getLifeLabel() const;
+    void setLifeLabel(QGraphicsTextItem *value);
 };
 
 #endif // ZOMBIE_H

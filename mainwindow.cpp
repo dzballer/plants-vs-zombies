@@ -394,7 +394,7 @@ void MainWindow::drawPlantChecker()
         lifeLabel->setDefaultTextColor(Qt::red);
         existingPlants.push_back(aPlant);
 
-        qDebug() << aPlant->getAlive();
+        //qDebug() << aPlant->getAlive();
 
         plantReady = false;
         setButtonsCheck(0);
@@ -474,7 +474,14 @@ void MainWindow::drawZombieChecker()
                     aZombie->setPixmap(zombie);
                     scene->addItem(aZombie);
                     aZombie->setPos(ui->graphicsView->width(),lawnTop+2*lawnHeight/(5)); //Middle row
-                    qDebug() << aZombie->pos();
+
+                    QGraphicsTextItem * lifeLabel = aZombie->getLifeLabel();
+                    lifeLabel->setPlainText("HP:" + QString::number(aZombie->getLife()));
+                    scene->addItem(lifeLabel);
+                    //lifeLabel->setPos(aZombie->pos().x()+20,aZombie->pos().y()-10);
+                    //lifeLabel->setDefaultTextColor(Qt::red);
+
+                    //qDebug() << aZombie->pos();
                     qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
                     existingZombies.push_back(aZombie);
                 }
@@ -482,8 +489,8 @@ void MainWindow::drawZombieChecker()
             }
             else if(currentLevel->getLevelNumber() == 2)
             {
-                for (int i=0; i<currentLevel->getRows(); i++) // 3 iterations
-                {
+                //for (int i=0; i<currentLevel->getRows(); i++) // 3 iterations
+                //{
                     // Creating Zombies
                     currentZombie = zombies[currentZombieSequence[zombieCounter]-1]; //Using to hold current zombie
                     Zombie * aZombie = new Zombie(currentZombie); // Need to new everytime or else same current zombie is added to scene
@@ -493,17 +500,23 @@ void MainWindow::drawZombieChecker()
                     zombie = zombie.scaledToHeight(lawnHeight/5);
                     aZombie->setPixmap(zombie);
                     scene->addItem(aZombie);
-                    aZombie->setPos(ui->graphicsView->width(),lawnTop+(i+1)*lawnHeight/5); // Makes 3 rows
+                    aZombie->setPos(ui->graphicsView->width(),lawnTop+(qrand()%3+1)*lawnHeight/5); // Zombie spawned in random row
                     qDebug() << aZombie->getSpeed();
                     qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
                     existingZombies.push_back(aZombie);
-                }
+
+                    /*QGraphicsTextItem * lifeLabel = aZombie->getLifeLabel();
+                    lifeLabel->setPlainText("HP:" + QString::number(aZombie->getLife()));
+                    scene->addItem(lifeLabel);
+                    lifeLabel->setPos(aZombie->pos().x()+20,aZombie->pos().y()-10);
+                    lifeLabel->setDefaultTextColor(Qt::red);*/
+                //}
                 zombieCounter++;
             }
             else if(currentLevel->getLevelNumber() == 3)
             {
-                for (int i=0; i<5; i++) // 5 iterations
-                {
+                //for (int i=0; i<5; i++) // 5 iterations
+                //{
                     // Creating Zombies
                     currentZombie = zombies[currentZombieSequence[zombieCounter]-1]; //Using to hold current zombie
                     Zombie * aZombie = new Zombie(currentZombie); // Need to new everytime or else same current zombie is added to scene
@@ -513,11 +526,16 @@ void MainWindow::drawZombieChecker()
                     zombie = zombie.scaledToHeight(lawnHeight/5);
                     aZombie->setPixmap(zombie);
                     scene->addItem(aZombie);
-                    aZombie->setPos(ui->graphicsView->width()-30,lawnTop+(i)*lawnHeight/5); // Makes 5 rows
+                    aZombie->setPos(ui->graphicsView->width()-30,lawnTop+(qrand()%5)*lawnHeight/5); // Random row
                     qDebug() << aZombie->getSpeed();
                     qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
                     existingZombies.push_back(aZombie);
-                }
+                    QGraphicsTextItem * lifeLabel = aZombie->getLifeLabel();
+                    lifeLabel->setPlainText("HP:" + QString::number(aZombie->getLife()));
+                    scene->addItem(lifeLabel);
+                    lifeLabel->setPos(aZombie->pos().x()+20,aZombie->pos().y()-10);
+                    lifeLabel->setDefaultTextColor(Qt::red);
+                //}
                 zombieCounter++;
             }
         }
@@ -626,7 +644,7 @@ void MainWindow::plantShooter()
                 break;
             }
             case 2:
-            {
+            {   
                 Sun *sun = new Sun;
                 QPixmap sunPixmap(":/pvz images/sun.png");
                 sunPixmap = sunPixmap.scaledToWidth(lawnWidth/columns);
@@ -637,6 +655,7 @@ void MainWindow::plantShooter()
                 plantSuns.push_back(sun);
                 qDebug()<<QString::fromStdString(existingPlants.at(i)->getName()) << "shoots";
                 break;
+
             }
             //case 3:
             //case 4:
@@ -682,14 +701,14 @@ void MainWindow::plantItemChecker()
                     }
                     else
                     {
-                        qDebug() << "before zombie damaged";
                         existingZombies.at(j)->setLife(existingZombies.at(j)->getLife() - 1);
                     }
-                    qDebug() << "before projectiles deleted";
+                    //qDebug() << "before projectiles deleted";
                     //projectiles.at(i)->hide();
+                    //projectiles.at(i)->setPos(2000,projectiles.at(i)->pos().y());
                     delete projectiles.at(i);
                     projectiles.erase(projectiles.begin()+i);
-                    qDebug() << "after projectiles deleted";
+                    //qDebug() << "after projectiles deleted";
 
                     //qDebug() << "collision";
                 }
@@ -783,6 +802,23 @@ void MainWindow::plantItemChecker()
             }
         }
     }
+
+    // Checking plantSuns
+    /*for(int i=0; i<int(plantSuns.size()); i++)
+    {
+        if(plantSuns.at(i)->getDuration() >= 7500) // If sun's duration has exceeded 7.5s, it will be deleted
+        {
+            delete plantSuns.at(i);
+            plantSuns.erase(plantSuns.begin()+i);
+        }
+        else if(plantSuns.at(i)->getDeleteReady()) // Otherwise, if the sun is clicked, it will also be deleted
+        {
+            sunPoints += 25;
+            delete plantSuns.at(i);
+            plantSuns.erase(plantSuns.begin()+i);
+            qDebug() << "sun deleted";
+        }
+    }*/
 
 }
 

@@ -72,8 +72,6 @@ public:
     void addCollideZombie(Zombie * zombie);
     bool getCollide() const;
     void setCollide(bool value);
-    QProgressBar *getHpBar() const;
-    void setHpBar(QProgressBar *value);
     QGraphicsTextItem *getLifeLabel() const;
     void setLifeLabel(QGraphicsTextItem *value);
 };
