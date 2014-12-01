@@ -67,6 +67,16 @@ void Level::setIntervalDecrement(double value)
 {
     intervalDecrement = value;
 }
+int Level::getRows() const
+{
+    return rows;
+}
+
+void Level::setRows(int value)
+{
+    rows = value;
+}
+
 
 
 

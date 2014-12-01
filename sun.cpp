@@ -58,7 +58,7 @@ void Sun::setFinalPos(const QPointF &value)
 {
     finalPos = value;
 }
-Sun::Sun() : yVelocity(10), duration(0), deleteReady(false)//, sunTimer(new QElapsedTimer)
+Sun::Sun() : yVelocity(4), duration(0), deleteReady(false)//, sunTimer(new QElapsedTimer)
 {
     //sunTimer->start();
 }

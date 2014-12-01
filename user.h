@@ -14,7 +14,7 @@ private:
     double timestamp;
 public:
     User();
-    User(int level, string name, double time_stamp);
+    User(int time_stamp, string name, double level);
     void setName(string name);
     void setLevel(int level);
     void setTimeStamp(double time_stamp);

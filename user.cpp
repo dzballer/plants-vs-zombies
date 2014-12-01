@@ -4,7 +4,7 @@ User::User()
 {
 }
 
-User::User(int level_number, string name, double time_stamp)
+User::User(int time_stamp, string name, double level_number)
 {
     setLevel(level_number);
     setName(name);

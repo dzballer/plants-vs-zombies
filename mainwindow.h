@@ -34,6 +34,7 @@ public:
     ~MainWindow();
 
     void mousePressEvent(QMouseEvent * e);
+    void sortComboBox();
 
 private slots:
     void uiUpdater();
@@ -45,6 +46,8 @@ private slots:
     void sunDropper();
 
     void plantShooter();
+
+    void plantItemChecker();
 
     //void createSun(int x, int y);
 
@@ -72,6 +75,9 @@ private slots:
 
     void on_startButton_clicked();
 
+    void on_restartButton_clicked();
+
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene * scene;
@@ -98,6 +104,7 @@ private:
     QTimer * uiTimer;
     QTimer * zombieTimer;
     QTimer * shootingTimer;
+    QTimer * plantItemTimer;
     QElapsedTimer * sunDropTimer;
     int sunPoints;
     int sunTimeCounter;
@@ -111,6 +118,7 @@ private:
     vector <Sun*> suns;
     vector <Sun*> plantSuns;
     vector <Projectile*> projectiles;
+    vector <int> zombieCollisionCounters;
 };
 
 #endif // MAINWINDOW_H

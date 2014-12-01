@@ -32,6 +32,9 @@ public:
     double getIntervalDecrement() const;
     void setIntervalDecrement(double value);
 
+    int getRows() const;
+    void setRows(int value);
+
 private:
     int levelNumber;
     int NUMBER_OF_ZOMBIES;

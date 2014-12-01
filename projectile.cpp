@@ -2,8 +2,6 @@
 
 Projectile::Projectile() : speed(5)
 {
-    projectileTimer = new QTimer;
-    projectileTimer->start();
 }
 
 void Projectile::advance(int phase)

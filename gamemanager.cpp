@@ -1,22 +1,15 @@
 #include "gamemanager.h"
 #include <QDateTime>
-
+#include <QApplication>
+#include <QTimer>
 void GameManager::readPlayersFile(QString file_name)
 {
-    /*string playersFileName = "pvz_players.csv";
-    string levelsFileName = "pvz_levels.csv";
-
-    QFile playersFile;*/
-
     mFile.setFileName(file_name);
     qDebug() << file_name;
 
-    //QFileInfo file(mFile); // to get path
-    //mPath = file.path();
-
     if (!mFile.open((QIODevice::ReadOnly | QIODevice::Text))) // error checking
     {
-       qDebug() << "Unable to open file for reading: An error has occurred.";
+       //qDebug() << "Unable to open file for reading: An error has occurred.";
        return;
     }
 
@@ -28,51 +21,53 @@ void GameManager::readPlayersFile(QString file_name)
         QString currentLine = in.readLine();
         QStringList fileList = currentLine.split(":");
 
-        if (fileList.count() == 3) // Checking if User file or Players file
+        if (fileList.count() == 3) // Checking if appropriate amount of elements are in csv
         {
-            //QRegExp re("\\d*"); // a digit (\d), zero or more times (*)
-
-            //if (fileList.at(1).contains(QRegExp( "[-`~!@#$%}^&*()_—+=|:;<>«»,.?/{}\'\"\\\[\\\]\\\\]")) || /*!fileList.at(1).contains("[^a-zA-Z\\d\\s]") ||*/ fileList.at(1).size() > 10)
-            for (int i = 0; i < fileList.count(); i++)
+            for (int j = 0; j < fileList.at(1).size(); j++)
             {
-                for (int j = 0; j < fileList.at(1).size(); j++)
+                if (!fileList.at(1).at(j).isLetterOrNumber())// && !fileList.at(1).at(j).isSpace())
                 {
-                    if (!fileList.at(1).at(j).isLetterOrNumber() && !fileList.at(1).at(j).isSpace())
-                    {
-                        qDebug() << fileList.at(1) << "'s' data could not be read. File will be discarded.\n";
-                        mFile.close();
-                        return;
-                    }
+                    qDebug() << fileList.at(1) << "'s' player-name is not alpha-numeric. File will be discarded. Program will start with no users.\n";
+                    mFile.flush();
+                    mFile.close();
+                    userVector.clear(); // Clearing previously read data
+                    return;
                 }
             }
-            /*{
-                qDebug() << fileList.at(1) << "'s' data could not be read. File will be discarded.\n";
+
+            // Checking if level contains any characters other than 0-9
+            for (int j = 0; j < fileList.at(2).size(); j++)
+            {
+                if (!fileList.at(2).at(j).isNumber())
+                {
+                    qDebug() << "Level data contains characters other than 0-9. File will be discarded.\n";
+                    mFile.flush();
+                    mFile.close();
+                    return;
+                }
+            }
+
+            // Checking if Level is <0 or >100
+            if (fileList.at(2).toInt()<0 || fileList.at(2).toInt()>100)
+            {
+                qDebug() << "Error: Level number must be between 0 and 100.\n";
+                mFile.flush();
                 mFile.close();
                 return;
-            }*.
-
-            QRegExp rx("\\w{0,9}");
-                QRegExpValidator validator (rx,0);
-             int pos=0;
-             if (validator.validate(userName,pos)==QValidator::Acceptable|| validator.validate(userName,pos)==QValidator::Intermediate)
-             {
-                 qDebug()<<"validation complete";
-                 return 1;
-
-             }
-             else {qDebug()<<"not validated";
-                 return false;}*/
+            }
 
             //  Creating aUser on the heap and passing fileList elements to the optional constructor,
             // thereby assigning the level, name, and timestamp to the new User.
             User * aUser = new User(fileList.at(0).toInt(), fileList.at(1).toStdString(), fileList.at(2).toInt()); // * remember to delete
             userVector.push_back(aUser);
-            qDebug() << fileList.at(1) << "'s user data read and parsed successfully.";
+            //qDebug() << fileList.at(1) << "'s user data read and parsed successfully.";
             //delete aUser;
         }
         else
         {
-            qDebug() << "Unable to read/parse file on line" << i << ": File has errors.";
+            qDebug() << "Unable to read/parse file on line" << i << ": Invalid Player Data: Program will start with no users.";
+            mFile.flush();
+            mFile.close();
             return;
         }
 
@@ -91,14 +86,15 @@ void GameManager::readLevelsFile(QString file_name)
     QFile playersFile;*/
 
     mFile.setFileName(file_name);
-    qDebug() << file_name;
-
-    //QFileInfo file(mFile); // to get path
-    //mPath = file.path();
 
     if (!mFile.open((QIODevice::ReadOnly | QIODevice::Text))) // error checking
     {
-       qDebug() << "Unable to open file for reading: An error has occurred.";
+       qDebug() << "Could not open " << file_name;
+       qDebug() << "Program will now terminate.";
+       qApp->quit();
+       QTimer * quitTimer = new QTimer;
+       quitTimer->singleShot(250,qApp,SLOT(quit())); // Quits program
+       delete quitTimer;
        return;
     }
 
@@ -218,7 +214,7 @@ void GameManager::readPlantsFile(QString file_name)
             aPlant->setSun(fileList.at(11).toInt());
             aPlant->setNeed(fileList.at(12).toInt());
             plantVector.push_back(aPlant);
-            qDebug() << fileList.at(1) << "'s plant data read and parsed successfully.";
+            //qDebug() << fileList.at(1) << "'s plant data read and parsed successfully.";
             //delete aPlant;
         }
         else
@@ -253,9 +249,6 @@ void GameManager::readZombiesFile(QString file_name)
         QString currentLine = in.readLine();
         QStringList fileList = currentLine.split(" ");
 
-        for(int i=0; i<fileList.count(); i++)
-        qDebug() << fileList.at(i);
-
         if (fileList.count() == 7) // Checking #elements
         {
             // Checking if alphanumeric
@@ -283,7 +276,7 @@ void GameManager::readZombiesFile(QString file_name)
             aZombie->setSpeed(fileList.at(6).toDouble());
 
             zombieVector.push_back(aZombie);
-            qDebug() << fileList.at(1) << "'s zombie data read and parsed successfully.";
+            //qDebug() << fileList.at(1) << "'s zombie data read and parsed successfully.";
             //delete aPlant;
         }
         else

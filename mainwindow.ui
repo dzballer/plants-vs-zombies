@@ -241,9 +241,9 @@
    <widget class="QComboBox" name="userComboBox">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>0</x>
       <y>140</y>
-      <width>111</width>
+      <width>151</width>
       <height>26</height>
      </rect>
     </property>

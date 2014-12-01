@@ -8,7 +8,7 @@ class Projectile : public QGraphicsPixmapItem
 {
 private:
     double speed;
-    QTimer * projectileTimer;
+    //QTimer * projectileTimer;
 public:
     Projectile();
     void advance(int phase);

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <QGraphicsPixmapItem>
+#include <QElapsedTimer>
 using std::string;
 
 class Zombie : public QGraphicsPixmapItem
@@ -15,9 +16,13 @@ private:
     int attack;
     double attackRate;
     double speed;
+    bool collide;
+    bool timerStarted;
+    QElapsedTimer * collisionTimer;
 
 public:
     Zombie();
+    Zombie(Zombie *zombie);
     string getName() const;
     void setName(const string &value);
     int getArmor() const;
@@ -33,6 +38,15 @@ public:
     int getIndex() const;
     void setIndex(int value);
     void advance(int phase);
+    //bool collidesWithItem(const QGraphicsItem *other) const;
+    //bool isCollidingWith(QGraphicsItem * other);
+    bool getCollide() const;
+    void setCollide(bool value);
+    void startCollisionTimer();
+    //void stopCollisionTimer();
+    int getCollisionTime();
+    bool isTimerStarted() const;
+    void setTimerStarted(bool value);
 };
 
 #endif // ZOMBIE_H
