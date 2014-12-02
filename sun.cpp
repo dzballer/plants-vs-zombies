@@ -18,7 +18,7 @@ void Sun::mousePressEvent(QGraphicsSceneMouseEvent *event)
     //QGraphicsView::mousePressEvent(event);
     QGraphicsPixmapItem::mousePressEvent(event);
     deleteReady = true;
-    qDebug() << "clicked";
+    //qDebug() << "clicked";
 }
 
 bool Sun::getDeleteReady() const
