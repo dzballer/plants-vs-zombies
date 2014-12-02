@@ -138,6 +138,7 @@ private:
     vector <int> zombieCollisionCounters;
     vector <Lawnmower*> lawnmowers;
     bool levelEnd;
+    vector <QGraphicsTextItem *> textItems;
 };
 
 #endif // MAINWINDOW_H

@@ -702,8 +702,8 @@ void MainWindow::sunDropper()
 
 void MainWindow::plantShooter()
 {
-    plants[1]->setFireRate(2);
-    plants[6]->setFireRate(4);
+    //plants[1]->setFireRate(2);
+    //plants[6]->setFireRate(4);
     for(int i=0; i<int(existingPlants.size()) && !existingPlants.empty(); i++)
     {
         if(existingPlants.at(i)->getAlive() && fmod((existingPlants.at(i)->getShootingTimeCounter()),(1000*existingPlants.at(i)->getFireRate())) == 0 )
@@ -786,10 +786,10 @@ void MainWindow::plantShooter()
                 //qDebug()<<QString::fromStdString(existingPlants.at(i)->getName()) << "shoots";
                 break;
             }
-            case 7: // need to fix
+            case 7: // chomper
             {
                 existingPlants.at(i)->setChompReady(true);
-                qDebug() << "chomp" << existingPlants.at(i)->getChompReady();
+                //qDebug() << "chomp" << existingPlants.at(i)->getChompReady();
                 //existingPlants.at(i)->hide();
                 //existingPlants.at(i)->setAlive(false);
                 //existingPlants.at(i)->setPos(2000,existingPlants.at(i)->pos().y()); // Removing it from view
@@ -924,7 +924,6 @@ void MainWindow::plantItemChecker()
                             // If last colliding zombie in vector is not the same as current colliding zombie
                             if (existingZombies.at(j) == theEndCollideZombie)
                             {
-
                                 isExisting = true;
                                 break;
                             }
@@ -980,6 +979,14 @@ void MainWindow::plantItemChecker()
                     {
                         double plantLife = existingPlants.at(i)->getLife()-collideZombie->getAttackRate()*50/1000;
                         existingPlants.at(i)->setLife(plantLife);
+
+                        // showing zombie attack
+                        /*QGraphicsTextItem * attackLabel = new QGraphicsTextItem;
+                        attackLabel->setPlainText("Attacking!");
+                        scene->addItem(attackLabel);
+                        attackLabel->setPos(collideZombie->pos().x(),collideZombie->pos().y()-qrand()%15);
+                        attackLabel->setDefaultTextColor(Qt::red);
+                        textItems.push_back(attackLabel);*/
 
                         if (plantLife>=0)
                         {

@@ -141,16 +141,6 @@ void Zombie::setAlive(bool value)
     alive = value;
 }
 
-QGraphicsTextItem *Zombie::getLifeLabel() const
-{
-    return lifeLabel;
-}
-
-void Zombie::setLifeLabel(QGraphicsTextItem *value)
-{
-    lifeLabel = value;
-}
-
 bool Zombie::getSlowed() const
 {
     return slowed;
@@ -159,6 +149,16 @@ bool Zombie::getSlowed() const
 void Zombie::setSlowed(bool value)
 {
     slowed = value;
+}
+
+QGraphicsTextItem *Zombie::getAttackLabel() const
+{
+    return attackLabel;
+}
+
+void Zombie::setAttackLabel(QGraphicsTextItem *value)
+{
+    attackLabel = value;
 }
 Zombie::Zombie() : collide(false), timerStarted(false), alive(true), slowed(false)
 {

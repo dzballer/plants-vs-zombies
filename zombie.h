@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QGraphicsPixmapItem>
 #include <QElapsedTimer>
+#include <QGraphicsTextItem>
 using std::string;
 
 class Zombie : public QGraphicsPixmapItem
@@ -21,7 +22,7 @@ private:
     QElapsedTimer * collisionTimer;
     bool alive;
     bool slowed;
-    QGraphicsTextItem * lifeLabel;
+    QGraphicsTextItem * attackLabel;
 public:
     Zombie();
     Zombie(Zombie *zombie);
@@ -51,10 +52,10 @@ public:
     void setTimerStarted(bool value);
     bool getAlive() const;
     void setAlive(bool value);
-    QGraphicsTextItem *getLifeLabel() const;
-    void setLifeLabel(QGraphicsTextItem *value);
     bool getSlowed() const;
     void setSlowed(bool value);
+    QGraphicsTextItem *getAttackLabel() const;
+    void setAttackLabel(QGraphicsTextItem *value);
 };
 
 #endif // ZOMBIE_H
