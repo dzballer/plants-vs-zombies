@@ -56,6 +56,8 @@ private slots:
 
     void gameEndChecker();
 
+    void levelEndChecker();
+
     //void plantSunsChecker();
 
     //void createSun(int x, int y);
@@ -116,6 +118,7 @@ private:
     QTimer * plantItemTimer;
     QTimer * projectileTimer;
     QTimer * gameEndTimer;
+    QTimer * levelEndTimer;
     QElapsedTimer * sunDropTimer;
     int sunPoints;
     int sunTimeCounter;
@@ -131,6 +134,7 @@ private:
     vector <Projectile*> projectiles;
     vector <int> zombieCollisionCounters;
     vector <Lawnmower*> lawnmowers;
+    bool levelEnd;
 };
 
 #endif // MAINWINDOW_H

@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>pvz files/pvz_levels.csv</file>
         <file>pvz files/pvz_plants.csv</file>
         <file>pvz images/sunflower.png</file>
         <file>pvz images/titlepage.png</file>
@@ -38,5 +37,6 @@
         <file>pvz images/level1lawn.jpg</file>
         <file>pvz images/lawnmower.png</file>
         <file>pvz images/powie.png</file>
+        <file>pvz files/pvz_levels.csv</file>
     </qresource>
 </RCC>
