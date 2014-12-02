@@ -8,7 +8,7 @@ class Level
 public:
     Level();
     Level(int level_number, std::vector<int> zombie_sequence, int row_number,
-          int start_time, int interval, int interval_decrement);
+          int start_time, int interval, double interval_decrement);
     //void setLevelNumber(int level_number);
     //void setRows(int row_number);
     //void setStartTime(int start_time);

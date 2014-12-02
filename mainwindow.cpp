@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qsrand(QTime::currentTime().msec());
 
     ui->setupUi(this);
-    connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(close()));
+    //connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(close()));
 
     // Creating gameManager that loads/reads files and data
     gameManager = new GameManager(); // need to delete
@@ -31,6 +31,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->progressBar_6->setRange(0,7500);
     ui->progressBar_7->setRange(0,7500);
     ui->progressBar_8->setRange(0,7500);
+
+    // Setting all progress bars to max
+    ui->progressBar_1->setValue(ui->progressBar_1->maximum());
+    ui->progressBar_2->setValue(ui->progressBar_2->maximum());
+    ui->progressBar_3->setValue(ui->progressBar_3->maximum());
+    ui->progressBar_4->setValue(ui->progressBar_4->maximum());
+    ui->progressBar_5->setValue(ui->progressBar_5->maximum());
+    ui->progressBar_6->setValue(ui->progressBar_6->maximum());
+    ui->progressBar_7->setValue(ui->progressBar_7->maximum());
+    ui->progressBar_8->setValue(ui->progressBar_8->maximum());
 
     // Setting buttons to checkable
     setButtonsCheckable(1);
@@ -168,6 +178,28 @@ void MainWindow::setButtonsCheck(bool check)
     ui->p8Button->setChecked(check);
 }
 
+void MainWindow::saveFile(vector<User *> user_vector, User *current_user)
+{
+    QFile save_file(":/pvz_players.csv");
+
+    current_user->setTimeStamp(QDateTime::currentDateTime().toTime_t()); // Retrieving and updating timestamp to the current user that is passed to the function
+
+    if (save_file.open(QIODevice::WriteOnly | QIODevice::Text | QFile::Truncate))
+    {
+         QTextStream out(&save_file);
+         for (int i = 0; i<int(user_vector.size()); i++)
+         {
+             out << user_vector[i]->getTimeStamp() << ":" << user_vector[i]->getName().c_str() << ":" << user_vector[i]->getLevel() << "\n";
+         }
+         qDebug() << QString::fromStdString(currentUser->getName()) << "data saved";
+         save_file.close();
+    }
+    else
+    {
+        qDebug() << "Error: Unable to save file.\n";
+    }
+}
+
 void MainWindow::uiUpdater()
 {
     // Updating sunpoints
@@ -212,9 +244,9 @@ void MainWindow::uiUpdater()
 
     // *** progress bars check
     // Updating buttons depending on sufficient sunpoints and progress bar status
-    /*if (sunPoints < plants[0]->getCost() || ui->progressBar_1->value() < .99*ui->progressBar_1->maximum()) // Progress bar only goes up to ~99% of maximum
+    if(sunPoints < plants[0]->getCost() || ui->progressBar_1->value() < .99*ui->progressBar_1->maximum()) // Progress bar only goes up to ~99% of maximum
     {
-        //ui->p1Button->setEnabled(0);
+        ui->p1Button->setEnabled(0);
     }
     else
     {
@@ -275,13 +307,12 @@ void MainWindow::uiUpdater()
     else
     {
         ui->p8Button->setEnabled(1);
-    }*/
+    }
 
-
-    /*if (ui->levelLineEdit->text().toInt() <= currentUser->getLevel())
+    if (ui->levelLineEdit->text().toInt() != currentUser->getLevel())
     {
-        ui->levelLineEdit->setText(QString::number(currentUser->getLevel()));
-    }*/
+        ui->levelLineEdit->setText("Level: " + QString::number(currentUser->getLevel()));
+    }
 }
 
 // Runs on a timer and checks if two boolean conditions are met. Draws pixmap and adds to scene if conditions are satisfied.
@@ -356,13 +387,13 @@ void MainWindow::drawPlantChecker()
                 }
             }
         }
-        else if(currentLevel->getLevelNumber() == 3) // If level 3
+        else if(currentLevel->getLevelNumber() >= 3) // If level 3+
         {
             for(int i = 0; i<5; i++) // Checking 5 rows
             {
                 for(int j = 0; j<9; j++)
                 {
-                    if(itemPos.y() > grid[0].at(j).y() || itemPos.y() < grid[4].at(j).y())  // Checking rows 2-4
+                    if(itemPos.y() < grid[0].at(j).y() || itemPos.y() > grid[4].at(j).y())  // Checking full lawn
                     {
                         qDebug() << "Must plant on grass.";
                         plantReady = 0;
@@ -461,7 +492,7 @@ void MainWindow::drawPlantChecker()
         // Resets progress bar timer when current plant is planted
         if(currentPlant->getIndex() == 1)
         {
-            //ui->progressBar_1->setValue(0);
+            ui->progressBar_1->setValue(0);
         }
         else if(currentPlant->getIndex() == 2)
         {
@@ -507,92 +538,91 @@ void MainWindow::drawZombieChecker()
     {
         if(zombieCounter >= int(currentZombieSequence.size()))
         {
-            //currentUser->setLevel(currentUser->getLevel()+1);
             zombieTimer->stop();
             return;
         }
+        //double temp = zombieInterval;
 
-        //zombieInterval = currentLevel->getInterval();
+        if(zombieInterval == 0)
+        {
+            zombieInterval = currentLevel->getInterval()*1000;
+        }
 
-        if(zombieTimeCounter%500 == 0) //zombieTimeCounter - lastZombieSpawnTime >= zombieInterval) //zombieCounter < int(currentZombieSequence.size()))
+        double timeSinceLastSpawn = zombieTimeCounter-lastZombieSpawnTime;
+
+        // If time since last spawn coincides with zombie interval
+        if(fmod((timeSinceLastSpawn),(zombieInterval)) == 0) //zombieTimeCounter - lastZombieSpawnTime >= zombieInterval) //zombieCounter < int(currentZombieSequence.size()))
         {
             if (currentLevel->getLevelNumber() == 1)
             {
-                for (int i=0; i<currentLevel->getRows(); i++) // 1 iterations
+                // Creating Zombies
+                currentZombie = zombies[currentZombieSequence[zombieCounter]-1]; //Using to hold current zombie
+                Zombie * aZombie = new Zombie(currentZombie); // Need to new everytime or else same current zombie is added to scene
+
+                QPixmap zombie(":/pvz images/" + QString::fromStdString(currentZombie->getName()) + ".png");
+
+                zombie = zombie.scaledToHeight(lawnHeight/5); // More appropriate than width based on zombie height variation
+                aZombie->setPixmap(zombie);
+                scene->addItem(aZombie);
+                aZombie->setPos(ui->graphicsView->width(),lawnTop+2*lawnHeight/(5)); //Middle row
+
+                qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
+                existingZombies.push_back(aZombie);
+
+                // Implementing interval decrement
+                if(zombieInterval-currentLevel->getIntervalDecrement()*1000 >= 0)
                 {
-                    // Creating Zombies
-                    currentZombie = zombies[currentZombieSequence[zombieCounter]-1]; //Using to hold current zombie
-                    Zombie * aZombie = new Zombie(currentZombie); // Need to new everytime or else same current zombie is added to scene
-
-                    QPixmap zombie(":/pvz images/" + QString::fromStdString(currentZombie->getName()) + ".png");
-
-                    zombie = zombie.scaledToHeight(lawnHeight/5); // More appropriate than width based on zombie height variation
-                    aZombie->setPixmap(zombie);
-                    scene->addItem(aZombie);
-                    aZombie->setPos(ui->graphicsView->width(),lawnTop+2*lawnHeight/(5)); //Middle row
-
-                    //QGraphicsTextItem * lifeLabel = aZombie->getLifeLabel();
-                    //lifeLabel->setPlainText("HP:" + QString::number(aZombie->getLife()));
-                    //scene->addItem(lifeLabel);
-                    //lifeLabel->setPos(aZombie->pos().x()+20,aZombie->pos().y()-10);
-                    //lifeLabel->setDefaultTextColor(Qt::red);
-
-                    //qDebug() << aZombie->pos();
-                    qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
-                    existingZombies.push_back(aZombie);
+                    zombieInterval -= currentLevel->getIntervalDecrement()*1000;
                 }
+                lastZombieSpawnTime = zombieTimeCounter;
                 zombieCounter++;
             }
             else if(currentLevel->getLevelNumber() == 2)
             {
-                //for (int i=0; i<currentLevel->getRows(); i++) // 3 iterations
-                //{
-                    // Creating Zombies
-                    currentZombie = zombies[currentZombieSequence[zombieCounter]-1]; //Using to hold current zombie
-                    Zombie * aZombie = new Zombie(currentZombie); // Need to new everytime or else same current zombie is added to scene
+                // Creating Zombies
+                currentZombie = zombies[currentZombieSequence[zombieCounter]-1]; //Using to hold current zombie
+                Zombie * aZombie = new Zombie(currentZombie); // Need to new everytime or else same current zombie is added to scene
 
-                    QPixmap zombie(":/pvz images/" + QString::fromStdString(currentZombie->getName()) + ".png");
+                QPixmap zombie(":/pvz images/" + QString::fromStdString(currentZombie->getName()) + ".png");
 
-                    zombie = zombie.scaledToHeight(lawnHeight/5);
-                    aZombie->setPixmap(zombie);
-                    scene->addItem(aZombie);
-                    aZombie->setPos(ui->graphicsView->width(),lawnTop+(qrand()%3+1)*lawnHeight/5); // Zombie spawned in random row
+                zombie = zombie.scaledToHeight(lawnHeight/5);
+                aZombie->setPixmap(zombie);
+                scene->addItem(aZombie);
+                aZombie->setPos(ui->graphicsView->width(),lawnTop+(qrand()%3+1)*lawnHeight/5); // Zombie spawned in random row
 
-                    qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
-                    existingZombies.push_back(aZombie);
+                qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
+                existingZombies.push_back(aZombie);
 
-
-                    /*QGraphicsTextItem * lifeLabel = aZombie->getLifeLabel();
-                    lifeLabel->setPlainText("HP:" + QString::number(aZombie->getLife()));
-                    scene->addItem(lifeLabel);
-                    lifeLabel->setPos(aZombie->pos().x()+20,aZombie->pos().y()-10);
-                    lifeLabel->setDefaultTextColor(Qt::red);*/
-                //}
+                // Implementing interval decrement
+                if(zombieInterval-currentLevel->getIntervalDecrement()*1000 >= 0)
+                {
+                    zombieInterval -= currentLevel->getIntervalDecrement()*1000;
+                }
+                lastZombieSpawnTime = zombieTimeCounter;
                 zombieCounter++;
             }
-            else if(currentLevel->getLevelNumber() == 3)
+            else if(currentLevel->getLevelNumber() >= 3)
             {
-                //for (int i=0; i<5; i++) // 5 iterations
-                //{
-                    // Creating Zombies
-                    currentZombie = zombies[currentZombieSequence[zombieCounter]-1]; //Using to hold current zombie
-                    Zombie * aZombie = new Zombie(currentZombie); // Need to new everytime or else same current zombie is added to scene
+                // Creating Zombies
+                currentZombie = zombies[currentZombieSequence[zombieCounter]-1]; //Using to hold current zombie
+                Zombie * aZombie = new Zombie(currentZombie); // Need to new everytime or else same current zombie is added to scene
 
-                    QPixmap zombie(":/pvz images/" + QString::fromStdString(currentZombie->getName()) + ".png");
+                QPixmap zombie(":/pvz images/" + QString::fromStdString(currentZombie->getName()) + ".png");
 
-                    zombie = zombie.scaledToHeight(lawnHeight/5);
-                    aZombie->setPixmap(zombie);
-                    scene->addItem(aZombie);
-                    aZombie->setPos(ui->graphicsView->width()-30,lawnTop+(qrand()%5)*lawnHeight/5); // Random row
-                    qDebug() << aZombie->getSpeed();
-                    qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
-                    existingZombies.push_back(aZombie);
-                    /*QGraphicsTextItem * lifeLabel = aZombie->getLifeLabel();
-                    lifeLabel->setPlainText("HP:" + QString::number(aZombie->getLife()));
-                    scene->addItem(lifeLabel);
-                    lifeLabel->setPos(aZombie->pos().x()+20,aZombie->pos().y()-10);
-                    lifeLabel->setDefaultTextColor(Qt::red);*/
-                //}
+                zombie = zombie.scaledToHeight(lawnHeight/5);
+                aZombie->setPixmap(zombie);
+                scene->addItem(aZombie);
+                aZombie->setPos(ui->graphicsView->width()-30,lawnTop+(qrand()%5)*lawnHeight/5); // Random row
+                qDebug() << aZombie->getSpeed();
+                qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
+                existingZombies.push_back(aZombie);
+
+                // Implementing interval decrement
+                if(zombieInterval-currentLevel->getIntervalDecrement()*1000 >= 0)
+                {
+                    zombieInterval -= currentLevel->getIntervalDecrement()*1000;
+                }
+                lastZombieSpawnTime = zombieTimeCounter;
                 zombieCounter++;
             }
         }
@@ -641,7 +671,7 @@ void MainWindow::sunDropper()
             randRow = 1+qrand()%3; // Rows 2-4
             randColumn = qrand()%(columns);
         }
-        else if(currentLevel->getLevelNumber() == 3)
+        else if(currentLevel->getLevelNumber() >= 3)
         {
             randRow = qrand()%5; // Rows 1-5
             randColumn = qrand()%(columns);
@@ -671,13 +701,8 @@ void MainWindow::sunDropper()
 
 void MainWindow::plantShooter()
 {
-    //plants[1]->setFireRate(2);
     for(int i=0; i<int(existingPlants.size()) && !existingPlants.empty(); i++)
     {
-        //qDebug() <<"in for loop";
-        //qDebug() << "Plant:" <<i << existingPlants.at(i)->getAlive();
-        //qDebug() << existingPlants.at(i)->getShootingTimeCounter();
-
         if(existingPlants.at(i)->getAlive() && fmod((existingPlants.at(i)->getShootingTimeCounter()),(1000*existingPlants.at(i)->getFireRate())) == 0 )
         {
             qDebug() << existingPlants.at(i)->getLife();
@@ -741,25 +766,7 @@ void MainWindow::plantShooter()
             }
             case 5: // need to fix
             {
-                for (int j=0; j<int(existingZombies.size()); j++)
-                {
-                    //QPointF zombiePos = existingZombies.at(j)->pos();
-                    //if(zombiePos.x() >= leftBound && zombiePos.x() <= rightBound && zombiePos.y() >= topBound && zombiePos.y() <= bottomBound)
-                    //{
-                        //existingZombies.at(j)->hide();
-                        //existingZombies.at(j)->setAlive(false);
-                    //}
-                    if(existingZombies.at(j)->collidesWithItem(existingPlants.at(i)))
-                    {
-                        existingZombies.at(j)->hide();
-                        existingZombies.at(j)->setAlive(false);
-                        //
-                        existingPlants.at(i)->hide();
-                        existingPlants.at(i)->setAlive(false);
-                        existingPlants.at(i)->setPos(2000,existingPlants.at(i)->pos().y()); // Removing it from view
-                        existingPlants.at(i)->getLifeLabel()->setPos(2000,existingPlants.at(i)->pos().y()); // Removing it from view
-                    }
-                }
+                existingPlants.at(i)->setBombReady(true);
                 break;
             }
             case 6:
@@ -828,33 +835,20 @@ void MainWindow::plantShooter()
 
 void MainWindow::plantItemChecker()
 {
-    // checking projectiles
-    //int numExistingProjectiles = projectiles.size(); // so loop doesn't go out of bounds if size changes
-    //int numExistingZombies = existingZombies.size();
-
-    // Collision detection
-
+    // Collision detection for projectile and zombies
     for (int j=0; j<int(existingZombies.size()); j++)
     {
         if(existingZombies.at(j)->getAlive())
         {
-            //int numExistingProjectiles = projectiles.size();
             for(int i=0; i<int(projectiles.size()); i++)
             {
 
                 if(existingZombies.at(j)->collidesWithItem(projectiles.at(i))) // We have a collision
                 {
-                    //qDebug() << "projectile hit";
-
-                    if (existingZombies.at(j)->getLife() <= 0)
+                    if (existingZombies.at(j)->getLife() <= 1) // Or else hits 11 times
                     {
-                        //qDebug() << "before zombie delete";
                             existingZombies.at(j)->hide();
                             existingZombies.at(j)->setAlive(false);
-
-        //                delete existingZombies.at(j);
-        //                existingZombies.erase(existingZombies.begin()+j);
-                        //qDebug() << "after zombie delete";
                     }
                     else
                     {
@@ -868,26 +862,35 @@ void MainWindow::plantItemChecker()
                         }
                         existingZombies.at(j)->setLife(existingZombies.at(j)->getLife() - 1);
                     }
-                    //qDebug() << "before projectiles deleted";
+
                     projectiles.at(i)->hide();
                     projectiles.at(i)->setPos(2000,projectiles.at(i)->pos().y());
-                    //delete projectiles.at(i);
-                    //projectiles.erase(projectiles.begin()+i);
-                    //qDebug() << "after projectiles deleted";
-
-                    //qDebug() << "collision";
                 }
-            //if (projectiles.at(i))
             }
 
-
+        // Checking plants and zombie collision
         for(int k=0; k<int(existingPlants.size()); k++)
         {
             if(existingPlants.at(k)->getAlive())
             {
                 if (existingZombies.at(j)->collidesWithItem(existingPlants.at(k)))
                 {
-                    existingZombies.at(j)->setCollide(true);
+                    if(existingPlants.at(k)->getIndex() == 5) // If potatomine
+                    {
+                        if(existingPlants.at(k)->getBombReady())
+                        {
+                            existingZombies.at(j)->hide();
+                            existingZombies.at(j)->setAlive(false);
+                            existingPlants.at(k)->hide();
+                            existingPlants.at(k)->setAlive(false);
+                            existingPlants.at(k)->setPos(2000,existingPlants.at(k)->pos().y()); // Removing it from view
+                            existingPlants.at(k)->getLifeLabel()->setPos(2000,existingPlants.at(k)->pos().y()); // Removing it from view
+                            existingPlants.at(k)->setBombReady(false);
+                        }
+                    }
+
+                    if(existingPlants.at(k)->getIndex() != 3)
+                    existingZombies.at(j)->setCollide(true); // Zombie stops moving as long as not cherry bomb
 
                     if(!existingPlants.at(k)->getCollide())
                     {
@@ -946,22 +949,27 @@ void MainWindow::plantItemChecker()
             if (existingPlants.at(i)->getCollide()) // If plant is colliding with zombie
             {
                  vector <Zombie *> existingCollideZombies = existingPlants.at(i)->getCollideZombies();
+                 vector <Zombie *> existingAliveCollideZombies;
                  for(int j=0; j <int(existingCollideZombies.size()); j++)
                  {
                     Zombie * collideZombie = existingCollideZombies.at(j);
                     if (collideZombie!= NULL && collideZombie->getAlive())
                     {
-                        double plantLife = existingPlants.at(i)->getLife()-collideZombie->getAttackRate()*50/1000;
-                        existingPlants.at(i)->setLife(plantLife);
+                        existingAliveCollideZombies.push_back(collideZombie);
+                    }
+                 }
 
-                        if (plantLife>=0)
+                 for(int j=0; j <int(existingCollideZombies.size()); j++)
+                 {
+                    Zombie * collideZombie = existingCollideZombies.at(j);
+                    if (collideZombie!= NULL && collideZombie->getAlive())
+                    {
+                        if(existingPlants.at(i)->collidesWithItem(collideZombie))
+                        existingPlants.at(i)->setLife(existingPlants.at(i)->getLife()-collideZombie->getAttackRate()*50/1000);
+                        if (existingPlants.at(i)->getLife() >=0)
                         {
-                            existingPlants.at(i)->getLifeLabel()->setPlainText("HP:" + QString::number(plantLife));
+                            existingPlants.at(i)->getLifeLabel()->setPlainText("HP:" + QString::number(int(existingPlants.at(i)->getLife())));
                         }
-                        /*QGraphicsTextItem * lifeLabel = new QGraphicsTextItem;
-                        lifeLabel->setPlainText("HP:" + QString::number(plantLife));
-                        scene->addItem(lifeLabel);
-                        lifeLabel->setPos(existingPlants.at(i)->pos().x(),existingPlants.at(i)->pos().y()-10);*/
                     }
                  }
             }
@@ -969,7 +977,7 @@ void MainWindow::plantItemChecker()
     }
 
     // Checking plantSuns
-    /*for(int i=0; i<int(plantSuns.size()); i++)
+    for(int i=0; i<int(plantSuns.size()); i++)
     {
         if(plantSuns.at(i)->getDuration() >= 7500) // If sun's duration has exceeded 7.5s, it will be deleted
         {
@@ -983,146 +991,9 @@ void MainWindow::plantItemChecker()
             plantSuns.erase(plantSuns.begin()+i);
             qDebug() << "sun deleted";
         }
-    }*/
+    }
 
 }
-
-/*void MainWindow::plantItemChecker()
-{
-    // checking projectiles
-    //int numExistingProjectiles = projectiles.size(); // so loop doesn't go out of bounds if size changes
-    //int numExistingZombies = existingZombies.size();
-
-
-
-    for(int i=0; i<int(projectiles.size()); i++)
-    {
-        if (projectiles.at(i)->pos().x() >= ui->graphicsView->width()+100)
-        {
-            delete projectiles.at(i);
-            projectiles.erase(projectiles.begin()+i);
-            //qDebug() <<"projectile deleted";
-        }
-
-        // Collision detection
-
-        for (int j=0; j<int(existingZombies.size()); j++)
-        {
-            if(projectiles.at(i)->collidesWithItem(existingZombies.at(j))) // We have a colission
-            {
-                qDebug() << "projectile hit";
-
-                if (existingZombies.at(j)->getLife() <= 0)
-                {
-                    qDebug() << "before zombie delete";
-                    delete existingZombies.at(j);
-                    existingZombies.erase(existingZombies.begin()+j);
-                    qDebug() << "after zombie delete";
-                }
-                else
-                {
-                    qDebug() << "before zombie damaged";
-                    existingZombies.at(j)->setLife(existingZombies.at(j)->getLife() - 1);
-                }
-                qDebug() << "before projectiles deleted";
-                qDebug() << projectiles.size();
-                delete projectiles.at(i);
-                projectiles.erase(projectiles.begin()+i);
-                qDebug() << projectiles.size();
-                qDebug() << "after projectiles deleted";
-
-                //qDebug() << "collision";
-            }
-        //if (projectiles.at(i))
-        }
-
-    }
-
-    //checking plant/zombie collision
-    //int numExistingPlants = existingPlants.size(); // so loop doesn't go out of bounds if size changes
-    //numExistingZombies = existingZombies.size(); // size may have changed depending on above loop
-    //int numExistingZombies = existingZombies.size();
-    /for (int i=0; i<int(existingPlants.size()); i++)
-    {
-        for (int j=0; j<int(existingZombies.size()); j++)
-        {
-            if(existingZombies.at(j)->collidesWithItem(existingPlants.at(i))) // If zombie j colllides with plant i
-            {
-                existingZombies.at(j)->setCollide(true);
-
-                if(!existingZombies.at(j)->isTimerStarted()) // if collision timer has not been started
-                {
-                    existingZombies.at(j)->startCollisionTimer(); // start the timer
-                    qDebug() << "collision timer started";
-                }
-
-                if(existingZombies.at(j)->getCollisionTime()%1000 == 0) // every 2 seconds
-                {
-                    qDebug() << "plant health: "<<existingPlants.at(i)->getLife()-existingZombies.at(j)->getAttack();
-                    existingPlants.at(i)->setLife(existingPlants.at(i)->getLife()-existingZombies.at(j)->getAttack()); // existing plant's life-1
-                }
-
-                int currentPlantLife = existingPlants.at(i)->getLife();
-                if(currentPlantLife <= 0)
-                {
-                    for (int k=0; k<int(existingZombies.size()); k++) // checking which zombies are currently colliding wth currentplant
-                    {
-                        if(existingZombies.at(k)->collidesWithItem(existingPlants.at(i)))
-                        {
-                            existingZombies.at(k)->setCollide(false); // collide = false so zombie continues moving
-                        }
-                    }
-
-                    qDebug() << "before delete";
-                    delete existingPlants.at(i);
-                    existingPlants.erase(existingPlants.begin()+i);
-                    qDebug () << "deleted";
-
-                    continue; // if deletes, then we go check the second plant
-                }
-
-            }
-        }
-    }/
-
-    /for (int i =0; i<int(existingZombies.size()); i++)
-    {
-        for(int j=0; j<int(existingPlants.size()); j++)
-        {
-
-            if (existingZombies.at(i)->collidesWithItem(existingPlants.at(j))) // existingZombies.at(i)->pos().x() <= existingPlants.at(j)->pos().x())//
-            {
-                existingZombies.at(i)->setCollide(true); // stops zombie from moving
-
-                //if (!existingZombies.at(i)->isTimerStarted()) // starts collision timer - uneven timing due to lag
-                //{existingZombies.at(i)->startCollisionTimer();}
-
-                if (existingPlants.at(j)->getLife()<=0) // if plant dead
-                {
-                    // allow all zombies previously colliding with that plant to start moving
-                    for (int k=0; k<int(existingZombies.size()); k++)
-                    {
-                        if (existingZombies.at(k)->collidesWithItem(existingPlants.at(j)))
-                        {
-                            existingZombies.at(k)->setCollide(false);
-                        }
-                    }
-
-                    //delete and erase plant
-                    delete existingPlants.at(j);
-                    existingPlants.erase(existingPlants.begin()+j);
-
-                    //continue; // exit out of 2nd for loop
-                }
-                else
-                {
-                    //existingPlants.at(j)->setLife(existingPlants.at(j)->getLife()-existingZombies.at(i)->getAttack()); // if plant still has life, zombie will damage it
-                }
-
-            }
-        }
-    }
-}*/
 
 void MainWindow::projectileChecker()
 {
@@ -1134,9 +1005,6 @@ void MainWindow::projectileChecker()
             {
                 projectiles.at(i)->hide();
                 projectiles.at(i)->setPos(2000,projectiles.at(i)->pos().y());
-                //delete projectiles.at(i);
-                //projectiles.erase(projectiles.begin()+i);
-                //qDebug() <<"projectile deleted";
             }
         }
     }
@@ -1149,17 +1017,14 @@ void MainWindow::gameEndChecker()
     {
         if(existingZombies.at(i)->getAlive())
         {
-            //if(existingZombies.at(i)->pos().x() < lawnLeft-10) // if zombie has gotten to the beginning of the lawn/house
-            //{
-                for(int j=0; j<int(lawnmowers.size()); j++)
+            for(int j=0; j<int(lawnmowers.size()); j++)
+            {
+                if(existingZombies.at(i)->collidesWithItem(lawnmowers.at(j)))
                 {
-                    if(existingZombies.at(i)->collidesWithItem(lawnmowers.at(j)))
-                    {
-                        lawnmowers.at(j)->setReady(true);
+                    lawnmowers.at(j)->setReady(true);
 
-                    }
                 }
-            //}
+            }
         }
     }
 
@@ -1168,7 +1033,7 @@ void MainWindow::gameEndChecker()
     {
         if(lawnmowers.at(i)->getReady())
         {
-            if(lawnmowers.at(i)->pos().x() > ui->graphicsView->width()+100)
+            if(lawnmowers.at(i)->pos().x() > ui->graphicsView->width()+100) // When lawnmower goes out of range
             {
                 lawnmowers.at(i)->hide();
                 lawnmowers.at(i)->setReady(false);
@@ -1176,16 +1041,12 @@ void MainWindow::gameEndChecker()
             }
             for(int j=0; j<int(existingZombies.size()); j++)
             {
-                qDebug() << j << "th iteration";
                 if(existingZombies.at(j)->getAlive())
                 {
-                    qDebug() << "before collide";
-                    if(existingZombies.at(j)->collidesWithItem(lawnmowers.at(i)))
+                    if(existingZombies.at(j)->collidesWithItem(lawnmowers.at(i))) // When lawnmower collides with zombies
                     {
-                        qDebug() << "before zombie delete";
                         existingZombies.at(j)->hide();
                         existingZombies.at(j)->setAlive(false);
-                        qDebug() << "after zombie delete";
                     }
                 }
             }
@@ -1241,20 +1102,22 @@ void MainWindow::gameEndChecker()
                     lawnmowers.clear();
 
                     // Resetting time counters
+                    zombieInterval = 0;
+                    lastZombieSpawnTime = 0;
                     zombieCounter = 0;
                     zombieTimeCounter = 0;
                     sunTimeCounter = 0;
                     sunPoints = 1000;
 
                     // Resetting progress bars
-                    ui->progressBar_1->setValue(0);
-                    ui->progressBar_2->setValue(0);
-                    ui->progressBar_3->setValue(0);
-                    ui->progressBar_4->setValue(0);
-                    ui->progressBar_5->setValue(0);
-                    ui->progressBar_6->setValue(0);
-                    ui->progressBar_7->setValue(0);
-                    ui->progressBar_8->setValue(0);
+                    ui->progressBar_1->setValue(ui->progressBar_1->maximum());
+                    ui->progressBar_2->setValue(ui->progressBar_2->maximum());
+                    ui->progressBar_3->setValue(ui->progressBar_3->maximum());
+                    ui->progressBar_4->setValue(ui->progressBar_4->maximum());
+                    ui->progressBar_5->setValue(ui->progressBar_5->maximum());
+                    ui->progressBar_6->setValue(ui->progressBar_6->maximum());
+                    ui->progressBar_7->setValue(ui->progressBar_7->maximum());
+                    ui->progressBar_8->setValue(ui->progressBar_8->maximum());
 
                     plantReady = false;
                     ui->graphicsView->setReady(false);
@@ -1290,7 +1153,7 @@ void MainWindow::levelEndChecker()
     {
         levelEnd = false; // Setting levelEnd back to false
 
-        if(currentUser->getLevel() < 3)
+        if(currentUser->getLevel() < levels.at(levels.size()-1)->getLevelNumber())
         {
             qDebug() << "level set";
             currentUser->setLevel(currentUser->getLevel()+1); //Advance to the next level
@@ -1319,20 +1182,22 @@ void MainWindow::levelEndChecker()
             lawnmowers.clear();
 
             // Resetting counters
+            zombieInterval = 0;
+            lastZombieSpawnTime = 0;
             zombieCounter = 0;
             zombieTimeCounter = 0;
             sunTimeCounter = 0;
             sunPoints = 1000;
 
             // Resetting progress bars
-            ui->progressBar_1->setValue(0);
-            ui->progressBar_2->setValue(0);
-            ui->progressBar_3->setValue(0);
-            ui->progressBar_4->setValue(0);
-            ui->progressBar_5->setValue(0);
-            ui->progressBar_6->setValue(0);
-            ui->progressBar_7->setValue(0);
-            ui->progressBar_8->setValue(0);
+            ui->progressBar_1->setValue(ui->progressBar_1->maximum());
+            ui->progressBar_2->setValue(ui->progressBar_2->maximum());
+            ui->progressBar_3->setValue(ui->progressBar_3->maximum());
+            ui->progressBar_4->setValue(ui->progressBar_4->maximum());
+            ui->progressBar_5->setValue(ui->progressBar_5->maximum());
+            ui->progressBar_6->setValue(ui->progressBar_6->maximum());
+            ui->progressBar_7->setValue(ui->progressBar_7->maximum());
+            ui->progressBar_8->setValue(ui->progressBar_8->maximum());
 
             plantReady = false;
             ui->graphicsView->setReady(false);
@@ -1340,7 +1205,7 @@ void MainWindow::levelEndChecker()
             qDebug() << "before restarting level";
             on_startButton_clicked(); // Starting game again but from next level
         }
-        else if(currentUser->getLevel() == 3) // If completed last level
+        else if(currentUser->getLevel() >= levels.at(levels.size()-1)->getLevelNumber()) // If completed last level
         {
             shootingTimer->stop();
             plantItemTimer->stop();
@@ -1395,6 +1260,7 @@ void MainWindow::levelEndChecker()
                 ui->deleteButton->setEnabled(1);
                 ui->restartButton->setEnabled(0);
 
+                uiUpdater();
             }
         }
     }
@@ -1604,15 +1470,18 @@ void MainWindow::on_userComboBox_currentIndexChanged(int index)
     {
         ui->nameLineEdit->setText("User Name");
         ui->levelLineEdit->setText("No User Selected");
+        ui->newButton->setEnabled(1);
         ui->deleteButton->setEnabled(0);
         ui->startButton->setEnabled(0);
+        ui->quitButton->setEnabled(0);
 
     }
     else if (index > 0) // For some reason the index is -1 and 0(?) at startup.
     {
         ui->deleteButton->setEnabled(1);
         ui->startButton->setEnabled(1);
-        ui->newButton->setEnabled(0);
+        ui->newButton->setEnabled(1);//ui->newButton->setEnabled(0); // Should be disabled but testplan says otherwise
+        ui->quitButton->setEnabled(0);
         ui->nameLineEdit->setText(QString::fromStdString(users[index-1]->getName()));
         ui->levelLineEdit->setText("Level: " + QString::number(users[index-1]->getLevel()));
 
@@ -1670,10 +1539,19 @@ void MainWindow::on_newButton_clicked()
         }
     }
 
+    // Checking if user name is valid size
+    if (newUserName.size() > 10)
+    {
+        qDebug() << "Username cannot be more than 10 characters.";
+        return;
+    }
+
     QMessageBox msgBox;
     msgBox.setWindowTitle("New User");
-    msgBox.setText("Are you sure you want to create new user: " + newUserName + "?");
+    msgBox.setText("Create new user: " + newUserName + "?");
     msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+    msgBox.setButtonText(QMessageBox::Yes, QString("OK"));
+    msgBox.setButtonText(QMessageBox::No, QString("Cancel"));
     msgBox.setDefaultButton(QMessageBox::Yes);
     if(msgBox.exec() == QMessageBox::Yes){
         User * newUser = new User;
@@ -1708,6 +1586,7 @@ void MainWindow::on_startButton_clicked()
     ui->deleteButton->setEnabled(0);
     ui->startButton->setEnabled(0);
     ui->restartButton->setEnabled(1);
+    ui->quitButton->setEnabled(1);
     ui->userComboBox->setEnabled(0);
     ui->nameLineEdit->setReadOnly(1);
 
@@ -1769,7 +1648,7 @@ void MainWindow::on_startButton_clicked()
             lawnmowers.push_back(aLawnmower);
         }
     }
-    else if(currentLevel->getLevelNumber() == 3)
+    else if(currentLevel->getLevelNumber() >= 3)
     {
         // Changing background to level 3 lawn
         lawn.load(":/pvz images/lawn.jpg");
@@ -1888,13 +1767,14 @@ void MainWindow::on_restartButton_clicked()
     msgBox.setWindowTitle("Restart");
     msgBox.setText("Are you sure you want to restart the level?");
     msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+    msgBox.setButtonText(QMessageBox::Yes, QString("OK"));
+    msgBox.setButtonText(QMessageBox::No, QString("Cancel"));
     msgBox.setDefaultButton(QMessageBox::No);
 
     if(msgBox.exec() == QMessageBox::Yes)
     {
         // Deleting all current objects
-
-        /*for(int i=0; i<int(existingPlants.size() && !existingPlants.empty()); i++)
+        for(int i=0; i<int(existingPlants.size() && !existingPlants.empty()); i++)
         {
             delete existingPlants.at(i);
         }
@@ -1914,7 +1794,7 @@ void MainWindow::on_restartButton_clicked()
         {
             delete plantSuns.at(m);
         }
-*/
+
         delete shootingTimer;
         delete plantItemTimer;
         delete sceneTimer;
@@ -1935,21 +1815,23 @@ void MainWindow::on_restartButton_clicked()
         projectiles.clear();
         lawnmowers.clear();
 
-        // Resetting time counters
+        // Resetting counters
+        zombieInterval = 0;
+        lastZombieSpawnTime = 0;
         zombieCounter = 0;
         zombieTimeCounter = 0;
         sunTimeCounter = 0;
         sunPoints = 1000;
 
         // Resetting progress bars
-        ui->progressBar_1->setValue(0);
-        ui->progressBar_2->setValue(0);
-        ui->progressBar_3->setValue(0);
-        ui->progressBar_4->setValue(0);
-        ui->progressBar_5->setValue(0);
-        ui->progressBar_6->setValue(0);
-        ui->progressBar_7->setValue(0);
-        ui->progressBar_8->setValue(0);
+        ui->progressBar_1->setValue(ui->progressBar_1->maximum());
+        ui->progressBar_2->setValue(ui->progressBar_2->maximum());
+        ui->progressBar_3->setValue(ui->progressBar_3->maximum());
+        ui->progressBar_4->setValue(ui->progressBar_4->maximum());
+        ui->progressBar_5->setValue(ui->progressBar_5->maximum());
+        ui->progressBar_6->setValue(ui->progressBar_6->maximum());
+        ui->progressBar_7->setValue(ui->progressBar_7->maximum());
+        ui->progressBar_8->setValue(ui->progressBar_8->maximum());
 
         plantReady = false;
         ui->graphicsView->setReady(false);
@@ -1967,10 +1849,85 @@ void MainWindow::on_restartButton_clicked()
         uiTimer->start(50);
         projectileTimer->start(50);
         gameEndTimer->start(50);
-        levelEndTimer->start(50 );
+        levelEndTimer->start(50);
         return;
     }
 
 
 
+}
+
+void MainWindow::on_quitButton_clicked()
+{
+    shootingTimer->stop();
+    plantItemTimer->stop();
+    sceneTimer->stop();
+    zombieTimer->stop();
+    sunTimer->stop();
+    timer->stop();
+    uiTimer->stop();
+    projectileTimer->stop();
+    gameEndTimer->stop();
+    levelEndTimer->stop();
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Quit");
+    msgBox.setText("Are you sure you want to leave this level?");
+    msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::Yes);
+
+    if(msgBox.exec() == QMessageBox::Yes)
+    {
+        // Saving
+        //saveFile(users, currentUser);
+
+        // Deleting all current objects
+        for(int i=0; i<int(existingPlants.size() && !existingPlants.empty()); i++)
+        {
+            delete existingPlants.at(i);
+        }
+        for(int j=0; j<int(existingZombies.size()); j++)
+        {
+            delete existingZombies.at(j);
+        }
+        for(int k=0; k<int(projectiles.size()); k++)
+        {
+            delete projectiles.at(k);
+        }
+        for(int l=0; l<int(suns.size()); l++)
+        {
+            delete suns.at(l);
+        }
+        for(int m=0; m<int(plantSuns.size()); m++)
+        {
+            delete plantSuns.at(m);
+        }
+        delete gameManager;
+
+        delete shootingTimer;
+        delete plantItemTimer;
+        delete sceneTimer;
+        delete zombieTimer;
+        delete sunTimer;
+        delete timer;
+        delete uiTimer;
+        delete projectileTimer;
+        delete gameEndTimer;
+        delete levelEndTimer;
+
+        qApp->quit();
+    }
+    else
+    {
+        shootingTimer->start(50);
+        plantItemTimer->start(50);
+        sceneTimer->start(50);
+        zombieTimer->start(50);
+        sunTimer->start(50);
+        timer->start(50);
+        uiTimer->start(50);
+        projectileTimer->start(50);
+        gameEndTimer->start(50);
+        levelEndTimer->start(50);
+    }
 }

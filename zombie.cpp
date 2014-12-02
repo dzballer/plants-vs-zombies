@@ -91,26 +91,6 @@ void Zombie::advance(int phase)
     //this->lifeLabel->setPos(this->pos().x()+20,this->pos().y()-10); // why crashing??
 }
 
-/*bool Zombie::collidesWithItem(const QGraphicsItem *other) const
-{
-    collide = true;
-    return true;
-}
-
-bool Zombie::isCollidingWith(QGraphicsItem *other)
-{
-    if(this->collidesWithItem(other))
-    {
-        collide = true;
-        return true;
-    }
-    else
-    {
-        collide = false;
-        return false;
-    }
-}*/
-
 bool Zombie::getCollide() const
 {
     return collide;

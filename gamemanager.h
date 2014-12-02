@@ -37,7 +37,6 @@ public:
     void readLevelsFile(QString file_name);
     void readPlantsFile(QString file_name);
     void readZombiesFile(QString file_name);
-    void saveFile(vector<User *> user_vector, User * current_user);
     void retImage(QString image_path);
     void displayImage(QImage * image);
     vector<User *> getUserVector();

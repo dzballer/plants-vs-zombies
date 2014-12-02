@@ -23,11 +23,25 @@ void GameManager::readPlayersFile(QString file_name)
 
         if (fileList.count() == 3) // Checking if appropriate amount of elements are in csv
         {
+            // Checking if alphanumeric
             for (int j = 0; j < fileList.at(1).size(); j++)
             {
                 if (!fileList.at(1).at(j).isLetterOrNumber())// && !fileList.at(1).at(j).isSpace())
                 {
-                    qDebug() << fileList.at(1) << "'s' player-name is not alpha-numeric. File will be discarded. Program will start with no users.\n";
+                    qDebug() << fileList.at(1) << "'s' player-name is not alpha-numeric. File will be discarded. Program will start with no users.";
+                    mFile.flush();
+                    mFile.close();
+                    userVector.clear(); // Clearing previously read data
+                    return;
+                }
+            }
+
+            // Checking to see if player name is greater than 10 characters
+            for (int j = 0; j < fileList.at(1).size(); j++)
+            {
+                if (fileList.at(1).size() > 10)// && !fileList.at(1).at(j).isSpace())
+                {
+                    qDebug() << fileList.at(1) << "'s' player-name is too long (>10 characters). Program will start with no users.";
                     mFile.flush();
                     mFile.close();
                     userVector.clear(); // Clearing previously read data
@@ -40,7 +54,7 @@ void GameManager::readPlayersFile(QString file_name)
             {
                 if (!fileList.at(2).at(j).isNumber())
                 {
-                    qDebug() << "Level data contains characters other than 0-9. File will be discarded.\n";
+                    //qDebug() << "Level data contains characters other than 0-9. File will be discarded.";
                     mFile.flush();
                     mFile.close();
                     return;
@@ -80,10 +94,7 @@ void GameManager::readPlayersFile(QString file_name)
 
 void GameManager::readLevelsFile(QString file_name)
 {
-    /*string playersFileName = "pvz_players.csv";
-    string levelsFileName = "pvz_levels.csv";
-
-    QFile playersFile;*/
+    qDebug() << file_name;
 
     mFile.setFileName(file_name);
 
@@ -121,18 +132,6 @@ void GameManager::readLevelsFile(QString file_name)
             return;
         }
 
-        /*QRegExp rx("\\w{0,9}");
-            QRegExpValidator validator (rx,0);
-         int pos=0;
-         if (validator.validate(userName,pos)==QValidator::Acceptable|| validator.validate(userName,pos)==QValidator::Intermediate)
-         {
-             qDebug()<<"validation complete";
-             return 1;
-
-         }
-         else {qDebug()<<"not validated";
-             return false;}*/
-
         if (fileList.count() == 6)
         {
 
@@ -147,7 +146,7 @@ void GameManager::readLevelsFile(QString file_name)
             Level * aLevel = new Level(fileList.at(0).toInt(), intVector, fileList.at(2).toInt(),
                                        fileList.at(3).toInt(), fileList.at(4).toInt(), fileList.at(5).toDouble());
             levelVector.push_back(aLevel); // *remember to delete
-            qDebug() << "Level " << fileList.at(0) << " level data read and parsed successfully.";
+            //qDebug() << "Level " << fileList.at(0) << " level data read and parsed successfully.";
             //delete aLevel;
         }
         else
@@ -291,28 +290,6 @@ void GameManager::readZombiesFile(QString file_name)
     mFile.close(); // Flushes then closes file
 }
 
-void GameManager::saveFile(vector<User *> user_vector, User * current_user)
-{
-    QFile save_file("pvz_players.csv");
-
-    current_user->setTimeStamp(QDateTime::currentDateTime().toTime_t()); // Retrieving and updating timestamp to the current user that is passed to the function
-
-    if (save_file.open(QIODevice::WriteOnly | QIODevice::Text | QFile::Truncate))
-    {
-     QTextStream out(&save_file);
-     for (int i = 0; i<int(user_vector.size()); i++)
-     {
-         out << user_vector[i]->getTimeStamp() << ":" << user_vector[i]->getName().c_str() << ":" << user_vector[i]->getLevel() << "\n";
-     }
-     // Save data. E.g.: out << timestamp << ":" << name << ":" << lvl << "\n"
-     save_file.close();
-    }
-    else
-    {
-        qDebug() << "Error: Unable to save file.\n";
-    }
-}
-
 vector<User *> GameManager::getUserVector()
 {
     return userVector;
@@ -332,48 +309,3 @@ vector<Zombie *> GameManager::getZombieVector()
 {
     return zombieVector;
 }
-
-
-/*
-QImage GameManager::retImage(QString image_path)
-{
-    QImage * pImage;
-    QString imagePath = mPath;
-    mCurrentImageName = mImageList[mIndex];
-
-    pImage = new QImage();
-    if(!(pImage->load(imagePath + "//" + mCurrentImageName)))
-    {
-            mCurrentImage = NULL;
-            mStatusMsg = "Error: Image file could not be loaded.";
-            qDebug() << "Error: Image file could not be loaded.";
-            return;
-    }
-    return pImage;
-}
-*/
-
-/*void GameManager::displayImage(QImage * image)
-{
-    QImage * pImage;
-
-    pImage = image;
-    if(!pImage)
-    {
-        qDebug() << "Error: Unable to display image.";
-        return;
-    }
-    else
-    {
-        QPixmap pixma;
-        pixma = QPixmap::fromImage(*pImage);
-        //pixma = pixma.scaledToWidth(); // scaling pixma
-        delete pImage;
-    }
-}*/
-
-/*void GameManager::addUser()
-{
-
-}
-*/

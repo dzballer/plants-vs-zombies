@@ -38,6 +38,7 @@ public:
     void sortComboBox();
     void setButtonsCheckable(bool checkable); // made wrong function but still used it
     void setButtonsCheck(bool check);
+    void saveFile(vector<User *> user_vector, User * current_user);
 
 private slots:
     void uiUpdater();
@@ -88,6 +89,8 @@ private slots:
 
     void on_restartButton_clicked();
 
+
+    void on_quitButton_clicked();
 
 private:
     Ui::MainWindow *ui;

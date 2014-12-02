@@ -67,11 +67,21 @@ void Plant::setChompReady(bool value)
 {
     chompReady = value;
 }
+
+bool Plant::getBombReady() const
+{
+    return bombReady;
+}
+
+void Plant::setBombReady(bool value)
+{
+    bombReady = value;
+}
 Plant::Plant() : shootingTimeCounter(0), alive(true), lifeLabel(new QGraphicsTextItem)
 {
 }
 
-Plant::Plant(Plant *plant) : shootingTimeCounter(0), alive(true), chompReady(false), lifeLabel(new QGraphicsTextItem)
+Plant::Plant(Plant *plant) : shootingTimeCounter(0), alive(true), bombReady(false), chompReady(false), lifeLabel(new QGraphicsTextItem)
 {
     this->index = (plant->getIndex());
     this->name=(plant->getName());

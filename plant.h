@@ -28,10 +28,10 @@ private:
     double seeding;
     int sun;
     int need;
-    QImage * mImage;
     int shootingTimeCounter;
     bool alive;
     bool collide;
+    bool bombReady;
     bool chompReady;
     vector <Zombie *> collideZombies; // Zombies that plant is currently colliding with
     QGraphicsTextItem * lifeLabel;
@@ -77,6 +77,8 @@ public:
     void setLifeLabel(QGraphicsTextItem *value);
     bool getChompReady() const;
     void setChompReady(bool value);
+    bool getBombReady() const;
+    void setBombReady(bool value);
 };
 
 #endif // PLANT_H
