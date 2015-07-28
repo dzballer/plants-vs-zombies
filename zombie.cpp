@@ -87,7 +87,7 @@ void Zombie::advance(int phase)
 
     if(collide) return; // If zombie is colliding with "*other", then zombie doesn't move.
 
-    this->setPos(this->pos().x()-4/speed,this->pos().y());
+    this->setPos(this->pos().x()-speed,this->pos().y());
     //this->lifeLabel->setPos(this->pos().x()+20,this->pos().y()-10); // why crashing??
 }
 

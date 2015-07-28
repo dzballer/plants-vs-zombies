@@ -11,8 +11,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow), currentPlant(NULL), currentUser(NULL), currentLevel(NULL),
-    currentZombie(NULL), plantReady(false), sunPoints(1000), sunTimeCounter(0), zombieCounter(0),
-    zombieTimeCounter(0), lastZombieSpawnTime(0), zombieInterval(0), rows(5), columns(9), grid(rows, std::vector<QPointF>(columns)), levelEnd(false)
+    currentZombie(NULL), plantReady(false), sunPoints(100), sunTimeCounter(0), zombieCounter(0),
+    zombieTimeCounter(0), lastZombieSpawnTime(0), zombieInterval(5000), rows(5), columns(9), grid(rows, std::vector<QPointF>(columns)), levelEnd(false)
 {
     qsrand(QTime::currentTime().msec());
 
@@ -575,6 +575,7 @@ void MainWindow::drawZombieChecker()
                 {
                     zombieInterval -= currentLevel->getIntervalDecrement()*1000;
                 }
+                qDebug() << zombieInterval;
                 lastZombieSpawnTime = zombieTimeCounter;
                 zombieCounter++;
             }
@@ -635,11 +636,14 @@ void MainWindow::sunDropper()
 {
     for(int i=0; i<int(suns.size()); i++)
     {
+        //qDebug() << suns.at(i)->getDuration();
         if(suns.at(i)->getDuration() >= 7500) // If sun's duration has exceeded 7.5s, it will be deleted
         {
             delete suns.at(i);
             suns.erase(suns.begin()+i);
+            qDebug() << "duration exceeded";
         }
+
         else if(suns.at(i)->getDeleteReady()) // Otherwise, if the sun is clicked, it will also be deleted
         {
             sunPoints += 25;
@@ -693,7 +697,7 @@ void MainWindow::sunDropper()
     sunTimeCounter += 50;
     for(int i=0; i<int(suns.size()); i++)
     {
-        if (suns.at(i)->getFinalPos() == suns.at(i)->pos()) // Once sun is at rest
+        if (suns.at(i)->getFinalPos().y() <= suns.at(i)->pos().y()+5) // Once sun is at rest
         {
             suns.at(i)->setDuration(suns.at(i)->getDuration()+50); // Adds to each sun's timeCounter/duration
         }
@@ -706,7 +710,7 @@ void MainWindow::plantShooter()
     //plants[6]->setFireRate(4);
     for(int i=0; i<int(existingPlants.size()) && !existingPlants.empty(); i++)
     {
-        if(existingPlants.at(i)->getAlive() && fmod((existingPlants.at(i)->getShootingTimeCounter()),(1000*existingPlants.at(i)->getFireRate())) == 0 )
+        if(existingPlants.at(i)->getAlive() && fmod((existingPlants.at(i)->getShootingTimeCounter()),(1000*existingPlants.at(i)->getFireRate())) == 0 && existingPlants.at(i)->getShootingTimeCounter()!= 0 )
         {
             //qDebug() << existingPlants.at(i)->getLife();
             switch (existingPlants.at(i)->getIndex())
@@ -1001,6 +1005,8 @@ void MainWindow::plantItemChecker()
     // Checking plantSuns
     for(int i=0; i<int(plantSuns.size()); i++)
     {
+
+        //qDebug() << plantSuns.at(i)->getDuration();
         if(plantSuns.at(i)->getDuration() >= 7500) // If sun's duration has exceeded 7.5s, it will be deleted
         {
             delete plantSuns.at(i);
@@ -1012,6 +1018,10 @@ void MainWindow::plantItemChecker()
             delete plantSuns.at(i);
             plantSuns.erase(plantSuns.begin()+i);
             //qDebug() << "sun deleted";
+        }
+        else if (plantSuns.at(i)->getFinalPos().y() <= plantSuns.at(i)->pos().y()+5) // Once sun is at rest
+        {
+            plantSuns.at(i)->setDuration(plantSuns.at(i)->getDuration()+50); // Adds to each sun's timeCounter/duration
         }
     }
 
@@ -1587,6 +1597,7 @@ void MainWindow::on_newButton_clicked()
         newUser->setLevel(1); // Setting level to 1 or else newUser gets random level.
         users.push_back(newUser);
         ui->userComboBox->addItem(QString::fromStdString(newUser->getName()), int(users.size())); // Adding user to the userComboBox
+        ui->userComboBox->currentIndexChanged(int(users.size()));
     }
     else
     {
@@ -1706,7 +1717,7 @@ void MainWindow::on_startButton_clicked()
     QRectF lawnRect(lawnLeft,lawnTop,lawnWidth,lawnHeight); // Creating a lawn rectangle with bounds left,up,width,height
 
     // Draw lines to help out with general visualization
-    QPen my_pen = QPen(Qt::black);
+    /*QPen my_pen = QPen(Qt::black);
     scene->addLine(QLineF(), my_pen);
     scene->addLine(QLineF(lawnRect.bottomLeft(), lawnRect.bottomRight()) ,my_pen);
     scene->addLine(QLineF(lawnRect.topLeft(), lawnRect.topRight()) ,my_pen);
@@ -1721,7 +1732,7 @@ void MainWindow::on_startButton_clicked()
     for (int i=0; i<6; i++)
     {
         scene->addLine(lawnLeft-lawnWidth/9,lawnTop+i*lawnHeight/5,lawnRight,lawnTop+i*lawnHeight/5); // drawing horizontal
-    }
+    }*/
 
     // Set up a timer which will periodicallly call the advance() method on scene object
     timer = new QTimer(this);
@@ -1902,6 +1913,8 @@ void MainWindow::on_quitButton_clicked()
     msgBox.setWindowTitle("Quit");
     msgBox.setText("Are you sure you want to leave this level?");
     msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+    msgBox.setButtonText(QMessageBox::Yes, QString("OK"));
+    msgBox.setButtonText(QMessageBox::No, QString("Cancel"));
     msgBox.setDefaultButton(QMessageBox::Yes);
 
     if(msgBox.exec() == QMessageBox::Yes)
