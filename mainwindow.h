@@ -36,7 +36,7 @@ public:
 
     void mousePressEvent(QMouseEvent * e);
     void sortComboBox();
-    void setButtonsCheckable(bool checkable); // made wrong function but still used it
+    void setButtonsCheckable(bool checkable);
     void setButtonsCheck(bool check);
     void saveFile(vector<User *> user_vector, User * current_user);
 
@@ -58,10 +58,6 @@ private slots:
     void gameEndChecker();
 
     void levelEndChecker();
-
-    //void plantSunsChecker();
-
-    //void createSun(int x, int y);
 
     void on_p1Button_clicked();
 
@@ -101,7 +97,6 @@ private:
     vector<Plant *> plants;
     vector<Zombie *> zombies;
     vector<int> currentZombieSequence;
-    //vector<QPointF> existingPlants; // Using to check if plants have already been drawn. Stores already existing plant coordinates.
     vector<Plant*> existingPlants;
     vector<Zombie*> existingZombies;
     Plant * currentPlant;

@@ -9,7 +9,7 @@ void GameManager::readPlayersFile(QString file_name)
 
     if (!mFile.open((QIODevice::ReadOnly | QIODevice::Text))) // error checking
     {
-       //qDebug() << "Unable to open file for reading: An error has occurred.";
+       qDebug() << "Unable to open file for reading: An error has occurred.";
        return;
     }
 
@@ -26,7 +26,7 @@ void GameManager::readPlayersFile(QString file_name)
             // Checking if alphanumeric
             for (int j = 0; j < fileList.at(1).size(); j++)
             {
-                if (!fileList.at(1).at(j).isLetterOrNumber())// && !fileList.at(1).at(j).isSpace())
+                if (!fileList.at(1).at(j).isLetterOrNumber())
                 {
                     qDebug() << fileList.at(1) << "'s' player-name is not alpha-numeric. File will be discarded. Program will start with no users.";
                     mFile.flush();
@@ -39,7 +39,7 @@ void GameManager::readPlayersFile(QString file_name)
             // Checking to see if player name is greater than 10 characters
             for (int j = 0; j < fileList.at(1).size(); j++)
             {
-                if (fileList.at(1).size() > 10)// && !fileList.at(1).at(j).isSpace())
+                if (fileList.at(1).size() > 10)
                 {
                     qDebug() << fileList.at(1) << "'s' player-name is too long (>10 characters). Program will start with no users.";
                     mFile.flush();
@@ -74,8 +74,6 @@ void GameManager::readPlayersFile(QString file_name)
             // thereby assigning the level, name, and timestamp to the new User.
             User * aUser = new User(fileList.at(0).toInt(), fileList.at(1).toStdString(), fileList.at(2).toInt()); // * remember to delete
             userVector.push_back(aUser);
-            //qDebug() << fileList.at(1) << "'s user data read and parsed successfully.";
-            //delete aUser;
         }
         else
         {
@@ -145,9 +143,7 @@ void GameManager::readLevelsFile(QString file_name)
             }
             Level * aLevel = new Level(fileList.at(0).toInt(), intVector, fileList.at(2).toInt(),
                                        fileList.at(3).toInt(), fileList.at(4).toInt(), fileList.at(5).toDouble());
-            levelVector.push_back(aLevel); // *remember to delete
-            //qDebug() << "Level " << fileList.at(0) << " level data read and parsed successfully.";
-            //delete aLevel;
+            levelVector.push_back(aLevel);
         }
         else
         {
@@ -213,8 +209,6 @@ void GameManager::readPlantsFile(QString file_name)
             aPlant->setSun(fileList.at(11).toInt());
             aPlant->setNeed(fileList.at(12).toInt());
             plantVector.push_back(aPlant);
-            //qDebug() << fileList.at(1) << "'s plant data read and parsed successfully.";
-            //delete aPlant;
         }
         else
         {
@@ -275,8 +269,6 @@ void GameManager::readZombiesFile(QString file_name)
             aZombie->setSpeed(fileList.at(6).toDouble());
 
             zombieVector.push_back(aZombie);
-            //qDebug() << fileList.at(1) << "'s zombie data read and parsed successfully.";
-            //delete aPlant;
         }
         else
         {

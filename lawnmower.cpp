@@ -21,6 +21,5 @@ void Lawnmower::advance(int phase)
     if(!phase) return;  // We don't do anything to prepare objects for advancing
 
     if(!ready) return;
-    //this->setos().setY(this->pos().y() + yVelocity);
     this->setPos(this->pos().x() + speed, this->pos().y());
 }

@@ -17,10 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
     qsrand(QTime::currentTime().msec());
 
     ui->setupUi(this);
-    //connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(close()));
 
     // Creating gameManager that loads/reads files and data
-    gameManager = new GameManager(); // need to delete
+    gameManager = new GameManager();
 
     // Setting progressbar ranges for seeding times
     ui->progressBar_1->setRange(0,7500);
@@ -59,11 +58,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->levelLineEdit->setReadOnly(1);
 
     //Loading csv files from resource file
-    //Testplan loading other csv files
-//gameManager->readPlayersFile(":/pvz files/pvz_players-test-2c1.csv");
-//gameManager->readPlayersFile(":/pvz files/pvz_players-test-2d1.csv");
-//gameManager->readPlayersFile(":/pvz files/pvz_players-test-2e1.csv");
-//gameManager->readPlayersFile(":/pvz files/pvz_players-test-2e2.csv");
     gameManager->readPlayersFile(":/pvz files/pvz_players.csv"); // Reading and parsing players file
     gameManager->readLevelsFile(":/pvz files/pvz_levels.csv"); // Reading and parsing levels file
     gameManager->readPlantsFile(":/pvz files/pvz_plants.csv"); // Reading and parsing plants data
@@ -92,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->p8Button->setIconSize(ui->p8Button->size());
 
     // Setting scene to a titlepage
-    scene = new QGraphicsScene; // need to delete
+    scene = new QGraphicsScene;
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setStyleSheet("background: black");
     scene->setSceneRect(0,0,ui->graphicsView->width()-2,ui->graphicsView->height()-2);;
@@ -104,16 +98,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // Sorting users by timestamp using bubblesort
     sortComboBox();
 
-    // Showing that users are indeed sorted properly
-    /*for (int i=0; i<int(users.size());i++)
-    {
-        qDebug() << users.at(i)->getTimeStamp();
-    }*/
-
     // Adding users
     ui->userComboBox->clear();
     ui->userComboBox->addItem("Select/Create User"); // Setting initial ComboBox label to "Users" with an irrelevant index
-    // *** why is it that the initial index is -1 then 0??
 
     // Adding all user names to the combobox in already sorted order from most recent to least recent
     for (int i = 0; i<int(users.size()); i++)
@@ -128,10 +115,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// Doesn't work because graphicsView clicks do not register in MainWindow lol
 void MainWindow::mousePressEvent(QMouseEvent *e)
 {
-    //e->ignore(); // Using the parameter (might be useless lol)
     if(!ui->graphicsView->getReady())
         plantReady = false; // If user clicks anywhere outside of graphicsview, the plantReady will be terminated
     setButtonsCheck(0);
@@ -321,10 +306,8 @@ void MainWindow::uiUpdater()
 void MainWindow::drawPlantChecker()
 {
     // If plant has been selected, below statement will turn true when user clicks the lawn
-    // qDebug() << "plant" << plantReady << "lawn" << ui->graphicsView->getReady();
     if (plantReady == true && ui->graphicsView->getReady())
     {
-        //qDebug() << "about to plant";
         if (currentPlant==NULL)
         {
             return;
@@ -339,9 +322,6 @@ void MainWindow::drawPlantChecker()
         }
 
         QPointF lastclick = ui->graphicsView->getPos(); // Getting position of click, not the actual graphics view - see lawn.cpp
-
-        //int y = (lastclick.y()-lawnTop)/(lawnHeight/5); // outputting the clicked grid row x column
-        //int x =  (lastclick.x()-lawnLeft)/(lawnWidth/9);
 
         // Checking if click is within x bounds of lawn
         if (lastclick.x() < lawnLeft || lastclick.x() > lawnRight)
@@ -468,7 +448,6 @@ void MainWindow::drawPlantChecker()
 
         // If all checks are passed, function will draw plant
         QPixmap plant(":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png");
-        //qDebug() << ":/pvz images/" + QString::fromStdString(currentPlant->getName()) + ".png";
         plant = plant.scaledToWidth(lawnWidth/9);
         Plant *aPlant = new Plant(currentPlant);
         aPlant->setPixmap(plant);
@@ -481,8 +460,6 @@ void MainWindow::drawPlantChecker()
         lifeLabel->setPos(aPlant->pos().x()+20,aPlant->pos().y()-10);
         lifeLabel->setDefaultTextColor(Qt::red);
         existingPlants.push_back(aPlant);
-
-        //qDebug() << aPlant->getAlive();
 
         plantReady = false;
         setButtonsCheck(0);
@@ -535,14 +512,14 @@ void MainWindow::drawPlantChecker()
 
 void MainWindow::drawZombieChecker()
 {
-    if(zombieTimeCounter >= currentLevel->getStartTime())//*1000)
+    // Only starts creating zombies when the level start time is reached (in seconds)
+    if(zombieTimeCounter >= currentLevel->getStartTime()*1000)
     {
         if(zombieCounter >= int(currentZombieSequence.size()))
         {
             zombieTimer->stop();
             return;
         }
-        //double temp = zombieInterval;
 
         if(zombieInterval == 0)
         {
@@ -552,7 +529,7 @@ void MainWindow::drawZombieChecker()
         double timeSinceLastSpawn = zombieTimeCounter-lastZombieSpawnTime;
 
         // If time since last spawn coincides with zombie interval
-        if(fmod((timeSinceLastSpawn),(zombieInterval)) == 0) //zombieTimeCounter - lastZombieSpawnTime >= zombieInterval) //zombieCounter < int(currentZombieSequence.size()))
+        if(fmod((timeSinceLastSpawn),(zombieInterval)) == 0)
         {
             if (currentLevel->getLevelNumber() == 1)
             {
@@ -567,7 +544,6 @@ void MainWindow::drawZombieChecker()
                 scene->addItem(aZombie);
                 aZombie->setPos(ui->graphicsView->width(),lawnTop+2*lawnHeight/(5)); //Middle row
 
-                qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
                 existingZombies.push_back(aZombie);
 
                 // Implementing interval decrement
@@ -575,7 +551,6 @@ void MainWindow::drawZombieChecker()
                 {
                     zombieInterval -= currentLevel->getIntervalDecrement()*1000;
                 }
-                qDebug() << zombieInterval;
                 lastZombieSpawnTime = zombieTimeCounter;
                 zombieCounter++;
             }
@@ -615,8 +590,6 @@ void MainWindow::drawZombieChecker()
                 aZombie->setPixmap(zombie);
                 scene->addItem(aZombie);
                 aZombie->setPos(ui->graphicsView->width()-30,lawnTop+(qrand()%5)*lawnHeight/5); // Random row
-                //qDebug() << aZombie->getSpeed();
-                qDebug() << QString::fromStdString(currentZombie->getName()) << "zombie has been spawned.";
                 existingZombies.push_back(aZombie);
 
                 // Implementing interval decrement
@@ -636,12 +609,10 @@ void MainWindow::sunDropper()
 {
     for(int i=0; i<int(suns.size()); i++)
     {
-        //qDebug() << suns.at(i)->getDuration();
         if(suns.at(i)->getDuration() >= 7500) // If sun's duration has exceeded 7.5s, it will be deleted
         {
             delete suns.at(i);
             suns.erase(suns.begin()+i);
-            qDebug() << "duration exceeded";
         }
 
         else if(suns.at(i)->getDeleteReady()) // Otherwise, if the sun is clicked, it will also be deleted
@@ -649,7 +620,6 @@ void MainWindow::sunDropper()
             sunPoints += 25;
             delete suns.at(i);
             suns.erase(suns.begin()+i);
-            qDebug() << "sun deleted";
         }
     }
 
@@ -683,7 +653,6 @@ void MainWindow::sunDropper()
         }
         else
         {
-            // for debugging
             randRow = 0;
             randColumn = 0;
         }
@@ -706,13 +675,10 @@ void MainWindow::sunDropper()
 
 void MainWindow::plantShooter()
 {
-    //plants[1]->setFireRate(2);
-    //plants[6]->setFireRate(4);
     for(int i=0; i<int(existingPlants.size()) && !existingPlants.empty(); i++)
     {
         if(existingPlants.at(i)->getAlive() && fmod((existingPlants.at(i)->getShootingTimeCounter()),(1000*existingPlants.at(i)->getFireRate())) == 0 && existingPlants.at(i)->getShootingTimeCounter()!= 0 )
         {
-            //qDebug() << existingPlants.at(i)->getLife();
             switch (existingPlants.at(i)->getIndex())
             {
             default:
@@ -720,16 +686,13 @@ void MainWindow::plantShooter()
 
             case 1:
             {
-                //qDebug() << "new projectile";
                 Projectile *projectile = new Projectile;
                 QPixmap projectilePixmap(":/pvz images/peashooterprojectile.png");
-                //projectilePixmap = projectilePixmap.scaledToWidth(10);
                 projectile->setPixmap(projectilePixmap);
                 scene->addItem(projectile);
                 projectile->setPos(existingPlants.at(i)->pos().x()+40, existingPlants.at(i)->pos().y());
 
                 projectiles.push_back(projectile);
-                //qDebug()<<QString::fromStdString(existingPlants.at(i)->getName()) << "shoots";
                 break;
             }
             case 2:
@@ -742,7 +705,6 @@ void MainWindow::plantShooter()
                 sun->setPos(existingPlants.at(i)->pos());
 
                 plantSuns.push_back(sun);
-                //qDebug()<<QString::fromStdString(existingPlants.at(i)->getName()) << "shoots";
                 break;
             }
             case 3:
@@ -778,44 +740,32 @@ void MainWindow::plantShooter()
             }
             case 6:
             {
-                //qDebug() << "new snow projectile";
                 Projectile *projectile = new Projectile;
                 QPixmap projectilePixmap(":/pvz images/snowpeaprojectile.png");
-                //projectilePixmap = projectilePixmap.scaledToWidth(10);
                 projectile->setPixmap(projectilePixmap);
                 scene->addItem(projectile);
                 projectile->setPos(existingPlants.at(i)->pos().x()+40, existingPlants.at(i)->pos().y());
                 projectile->setSlow(true); // because snow pea
                 projectiles.push_back(projectile);
-                //qDebug()<<QString::fromStdString(existingPlants.at(i)->getName()) << "shoots";
                 break;
             }
             case 7: // chomper
             {
                 existingPlants.at(i)->setChompReady(true);
-                //qDebug() << "chomp" << existingPlants.at(i)->getChompReady();
-                //existingPlants.at(i)->hide();
-                //existingPlants.at(i)->setAlive(false);
-                //existingPlants.at(i)->setPos(2000,existingPlants.at(i)->pos().y()); // Removing it from view
-                //existingPlants.at(i)->getLifeLabel()->setPos(2000,existingPlants.at(i)->pos().y()); // Removing it from view
                 break;
             }
             case 8: // repeater
             {
                 for (int k=0; k<2; k++) // 2 bullets for repeater
                 {
-                    //qDebug() << "new projectile" << k;
                     Projectile *projectile = new Projectile;
                     QPixmap projectilePixmap(":/pvz images/peashooterprojectile.png");
-                    //projectilePixmap = projectilePixmap.scaledToWidth(10);
                     projectile->setPixmap(projectilePixmap);
                     scene->addItem(projectile);
                     //distinguish the 2 bullets by a slight shift in x position
                     projectile->setPos(existingPlants.at(i)->pos().x()+40-k*10, existingPlants.at(i)->pos().y());
 
                     projectiles.push_back(projectile);
-                    //qDebug()<<QString::fromStdString(existingPlants.at(i)->getName()) << "shoots";
-
                 }
                 break;
             }
@@ -984,7 +934,7 @@ void MainWindow::plantItemChecker()
                         double plantLife = existingPlants.at(i)->getLife()-collideZombie->getAttackRate()*50/1000;
                         existingPlants.at(i)->setLife(plantLife);
 
-                        // showing zombie attack
+                        // showing zombie attack - WIP
                         /*QGraphicsTextItem * attackLabel = new QGraphicsTextItem;
                         attackLabel->setPlainText("Attacking!");
                         scene->addItem(attackLabel);
@@ -1005,8 +955,6 @@ void MainWindow::plantItemChecker()
     // Checking plantSuns
     for(int i=0; i<int(plantSuns.size()); i++)
     {
-
-        //qDebug() << plantSuns.at(i)->getDuration();
         if(plantSuns.at(i)->getDuration() >= 7500) // If sun's duration has exceeded 7.5s, it will be deleted
         {
             delete plantSuns.at(i);
@@ -1017,7 +965,6 @@ void MainWindow::plantItemChecker()
             sunPoints += 25;
             delete plantSuns.at(i);
             plantSuns.erase(plantSuns.begin()+i);
-            //qDebug() << "sun deleted";
         }
         else if (plantSuns.at(i)->getFinalPos().y() <= plantSuns.at(i)->pos().y()+5) // Once sun is at rest
         {
@@ -1190,10 +1137,8 @@ void MainWindow::levelEndChecker()
 
         if(currentUser->getLevel() < levels.at(levels.size()-1)->getLevelNumber())
         {
-           // qDebug() << "level set";
             currentUser->setLevel(currentUser->getLevel()+1); //Advance to the next level
 
-            //qDebug() << "before deleting timers";
             // Deleting timers
             delete shootingTimer;
             delete plantItemTimer;
@@ -1206,7 +1151,6 @@ void MainWindow::levelEndChecker()
             delete gameEndTimer;
             delete levelEndTimer;
 
-            //qDebug() << "before deleting scene";
             // Deleting and clearing scene/existing objects
             scene->clear();
             existingPlants.clear();
@@ -1240,7 +1184,6 @@ void MainWindow::levelEndChecker()
             plantReady = false;
             ui->graphicsView->setReady(false);
 
-            //qDebug() << "before restarting level";
             on_startButton_clicked(); // Starting game again but from next level
         }
         else if(currentUser->getLevel() >= levels.at(levels.size()-1)->getLevelNumber()) // If completed last level
@@ -1257,7 +1200,7 @@ void MainWindow::levelEndChecker()
             levelEndTimer->stop();
 
             QMessageBox msgBox;
-            msgBox.setWindowTitle("Congradulations!");
+            msgBox.setWindowTitle("Congratulations!");
             msgBox.setText("You have beaten all the zombies!");
             msgBox.setStandardButtons(QMessageBox::Yes);
             msgBox.setButtonText(QMessageBox::Yes, QString("Sweet!"));
@@ -1304,56 +1247,6 @@ void MainWindow::levelEndChecker()
     }
 }
 
-/*void MainWindow::createSun(int x, int y)
-{
-    Sun *aSun = new Sun;
-
-    aSun->setPos(x,y);
-
-    for(int i=0; i<int(suns.size()); i++)
-    {
-        if(suns.at(i)->getDuration() >= 3000)
-        {
-            //vector<Sun*>::iterator iter;
-            //for(int j=0; j<i; iter++, j++);
-            delete suns.at(i);
-            suns.erase(suns.begin()+i);
-        }
-        else if(suns.at(i)->getDeleteReady())
-        {
-            sunPoints += 25;
-            delete suns.at(i);
-            suns.erase(suns.begin()+i);
-            qDebug() << "deleted";
-        }
-    }
-
-    if(sunTimeCounter%3000 == 0 && sunTimeCounter <= 0)
-    {
-        Sun *sun = new Sun;
-        QPixmap sunPixmap(":/pvz images/sun.png");
-        sunPixmap = sunPixmap.scaledToWidth(lawnWidth/columns);
-        sun->setPixmap(sunPixmap);
-        scene->addItem(sun);
-
-        // Randomizing a grid coordinate for the sundrop
-        int randRow = qrand()%(rows); // /(double(RAND_MAX)+1);
-        int randColumn = qrand()%(columns);
-
-        QPointF randPoint = grid[randRow][randColumn];
-        sun->setPos(randPoint);
-
-        //sun->advance(10);
-        //sun->setPos(itemPos);
-        suns.push_back(sun);
-    }
-    sunTimeCounter += 50;
-    for(int i=0; i<int(suns.size()); i++)
-    {
-        suns.at(i)->setDuration(suns.at(i)->getDuration()+50);
-    }
-}*/
-
 void MainWindow::on_p1Button_clicked()
 {
     currentPlant = plants[0]; // Sets current plant pointer to selected plant in the plants vector
@@ -1371,7 +1264,6 @@ void MainWindow::on_p1Button_clicked()
     {
         setButtonsCheck(0); // Disable other buttons
         ui->p1Button->setChecked(1); // Checks this one
-        //qDebug() << plantReady;
     }
 
 }
@@ -1514,19 +1406,17 @@ void MainWindow::on_userComboBox_currentIndexChanged(int index)
         ui->quitButton->setEnabled(0);
 
     }
-    else if (index > 0) // For some reason the index is -1 and 0(?) at startup.
+    else if (index > 0) // Because the index is -1 and 0(?) at startup.
     {
         ui->deleteButton->setEnabled(1);
         ui->startButton->setEnabled(1);
-        ui->newButton->setEnabled(1);//ui->newButton->setEnabled(0); // Should be disabled but testplan says otherwise
+        ui->newButton->setEnabled(1);
         ui->quitButton->setEnabled(0);
         ui->nameLineEdit->setText(QString::fromStdString(users[index-1]->getName()));
         ui->levelLineEdit->setText("Level: " + QString::number(users[index-1]->getLevel()));
 
         currentUser = users[index-1];
-        //currentLevel = levels[index-1];
     }
-    //qDebug() << index;
 }
 
 void MainWindow::on_deleteButton_clicked()
@@ -1634,8 +1524,6 @@ void MainWindow::on_startButton_clicked()
     currentZombieSequence = currentLevel->getZombieSequence();
 
     // Depending on user's current level, the playable grid and lawn will be different
-    //qDebug()<< "current level:" << currentLevel->getLevelNumber();
-
     QPixmap lawn;
 
     // Implementing a 5x9 grid that will be used later on for ease of operation
@@ -1706,17 +1594,11 @@ void MainWindow::on_startButton_clicked()
         }
     }
 
-    /*for(int i=0; i<rows; i++)
-    {
-        for(int j=0; j<columns; j++)
-        {
-            qDebug() << grid.at(i).at(j);
-        }
-    }*/
-
     QRectF lawnRect(lawnLeft,lawnTop,lawnWidth,lawnHeight); // Creating a lawn rectangle with bounds left,up,width,height
 
-    // Draw lines to help out with general visualization
+    // **************************************
+    // Draw lines to help out with general visualization - commented out for playing
+
     /*QPen my_pen = QPen(Qt::black);
     scene->addLine(QLineF(), my_pen);
     scene->addLine(QLineF(lawnRect.bottomLeft(), lawnRect.bottomRight()) ,my_pen);
@@ -1733,6 +1615,8 @@ void MainWindow::on_startButton_clicked()
     {
         scene->addLine(lawnLeft-lawnWidth/9,lawnTop+i*lawnHeight/5,lawnRight,lawnTop+i*lawnHeight/5); // drawing horizontal
     }*/
+
+    // ************************************
 
     // Set up a timer which will periodicallly call the advance() method on scene object
     timer = new QTimer(this);
@@ -1764,17 +1648,17 @@ void MainWindow::on_startButton_clicked()
     connect(shootingTimer, SIGNAL(timeout()), this, SLOT(plantShooter()));
     shootingTimer->start(50);
 
-    // Set up a timer which will periodically check the plant items such as sun drops, projectiles, etc.
+    // Set up a timer which will periodically check the plant items such as sun drops
     plantItemTimer = new QTimer(this);
     connect(plantItemTimer, SIGNAL(timeout()), this, SLOT(plantItemChecker()));
     plantItemTimer->start(50);
 
-    // Set up a timer which will periodically check the plant items such as sun drops, projectiles, etc.
+    // Set up a timer which will periodically check projectile status and collision
     projectileTimer = new QTimer(this);
     connect(projectileTimer, SIGNAL(timeout()), this, SLOT(projectileChecker()));
     projectileTimer->start(50);
 
-    // Set up a timer which will periodically check the plant items such as sun drops, projectiles, etc.
+    // Set up a timer which will periodically check game end
     gameEndTimer = new QTimer(this);
     connect(gameEndTimer, SIGNAL(timeout()), this, SLOT(gameEndChecker()));
     gameEndTimer->start(50);
@@ -1919,7 +1803,7 @@ void MainWindow::on_quitButton_clicked()
 
     if(msgBox.exec() == QMessageBox::Yes)
     {
-        // Saving
+        // Saving - WIP
         //saveFile(users, currentUser);
 
         // Deleting all current objects

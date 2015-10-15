@@ -82,14 +82,3 @@ void Level::setRows(int value)
 
 
 
-
-/*int Level::getStartTime() const
-{
-    return startTime;
-}
-
-void Level::setStartTime(int value)
-{
-    startTime = value;
-}
-*/

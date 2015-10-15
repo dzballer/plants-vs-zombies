@@ -41,12 +41,9 @@ public:
     int getIndex() const;
     void setIndex(int value);
     void advance(int phase);
-    //bool collidesWithItem(const QGraphicsItem *other) const;
-    //bool isCollidingWith(QGraphicsItem * other);
     bool getCollide() const;
     void setCollide(bool value);
     void startCollisionTimer();
-    //void stopCollisionTimer();
     int getCollisionTime();
     bool isTimerStarted() const;
     void setTimerStarted(bool value);

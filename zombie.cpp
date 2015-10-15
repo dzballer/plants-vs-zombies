@@ -81,14 +81,14 @@ void Zombie::advance(int phase)
     if(!alive)
     {
         this->setPos(2000,this->pos().y());
-        //lifeLabel->setPos(2000,lifeLabel->pos().y());
+        //lifeLabel->setPos(2000,lifeLabel->pos().y()); - Attack display WIP
         return;
     }
 
     if(collide) return; // If zombie is colliding with "*other", then zombie doesn't move.
 
-    this->setPos(this->pos().x()-speed,this->pos().y());
-    //this->lifeLabel->setPos(this->pos().x()+20,this->pos().y()-10); // why crashing??
+    this->setPos(this->pos().x()-.5*speed,this->pos().y());
+    //this->lifeLabel->setPos(this->pos().x()+20,this->pos().y()-10); - Attack display WIP
 }
 
 bool Zombie::getCollide() const
@@ -107,13 +107,6 @@ void Zombie::startCollisionTimer()
     collisionTimer->start();
     timerStarted = true;
 }
-
-/*void Zombie::stopCollisionTimer()
-{
-    collisionTimer = new QElapsedTimer;
-    collisionTimer->stop();
-    timerStarted = false;
-}*/
 
 int Zombie::getCollisionTime()
 {
@@ -175,5 +168,5 @@ Zombie::Zombie(Zombie *zombie) : collide(false), timerStarted(false), alive(true
     this->setAttackRate(zombie->getAttackRate());
     this->setSpeed(zombie->getSpeed());
 
-    //lifeLabel->setPos(this->pos().x()+20,this->pos().y()-10);
+    //lifeLabel->setPos(this->pos().x()+20,this->pos().y()-10); - Attack display WIP
 }
