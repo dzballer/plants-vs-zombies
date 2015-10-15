@@ -20,9 +20,10 @@ Gameplay Instructions:
 2. Start!
 ![Alt text](http://i.imgur.com/DGZkv45.png)
 
-3. The number in the top left corner is the number of your sunpoints
-4. Each plant is toggled on click, meaning to plant: click on the plant of choice and then the grid you wish to plant on (this will refresh the timer)
+3. The number in the top left corner is the number of your sunpoints. You can click on sunpoints as they fall or once they land to increase your bank.
+4. Each plant is toggled on click. To plant: click on the plant of choice and then the grid you wish to plant on (this will refresh the timer)
 5. There are 4 levels in total, gl!
+![Alt text](http://i.imgur.com/YmWXYby.png)
 
-Good luck, and blow your brains out! (wait what..)
+Good luck, and blow your brains out! 
 ![Alt text](http://i.imgur.com/1Sfo4iy.png)
