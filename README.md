@@ -2,6 +2,8 @@
 
 A "homemade" version of PvZ built with C++ on QT 5.3.1
 
+Full feature list: [file.pdf](pvz\ files/pvz_features.pdf)
+
 Gameplay sample album (note: grid will not be shown in actual game): http://imgur.com/a/XqXTW
 
 Installation/Running Instructions:
